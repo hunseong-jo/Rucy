@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 414461b8a0692074e9d69bed8a2056af, type: 3}
+  m_Name: CreatureDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::DietCreature.CreatureDatabase
+  species:
+  - id: slime
+    displayName: "\uC2AC\uB77C\uC784"
+    sprite: {fileID: 21300000, guid: 83cf69b29cf2afa489d884d6eadad03c, type: 3}
+    tier: basic
+    dietCategory: instant
+  - id: chick
+    displayName: "\uBCD1\uC544\uB9AC"
+    sprite: {fileID: 21300000, guid: d1d8dcede74fea14e92ea99bf30ddaf3, type: 3}
+    tier: basic
+    dietCategory: meat
+  - id: frog
+    displayName: "\uD504\uB85D"
+    sprite: {fileID: 21300000, guid: 722b1793e69636e45969301599e21dd1, type: 3}
+    tier: basic
+    dietCategory: veg
+  - id: star
+    displayName: "\uBCC4\uB3CC\uC774"
+    sprite: {fileID: 21300000, guid: 3404824c9fe4e9f4bb74cf6da81554ac, type: 3}
+    tier: basic
+    dietCategory: dessert
+  - id: rare2
+    displayName: "\uC560\uD50C"
+    sprite: {fileID: 21300000, guid: 06ea73951c2d192499c77a5d70cf762a, type: 3}
+    tier: rare
+    dietCategory: veg
+  - id: rare5
+    displayName: "\uB77C\uC784"
+    sprite: {fileID: 21300000, guid: 13a08393d2a28434eb871fa813fe61ca, type: 3}
+    tier: rare
+    dietCategory: veg
+  - id: rare6
+    displayName: "\uC0B0\uD638"
+    sprite: {fileID: 21300000, guid: 8b475427693d49845b257794564e604a, type: 3}
+    tier: rare
+    dietCategory: meat
+  - id: rare10
+    displayName: "\uD478\uB978\uBCC4"
+    sprite: {fileID: 21300000, guid: abb61ccaefe5da647a4c109c36e5bab3, type: 3}
+    tier: rare
+    dietCategory: instant
+  - id: premium2
+    displayName: "\uB8E8\uBE44"
+    sprite: {fileID: 21300000, guid: fc55aaf8b04128643b193a24ccc816e5, type: 3}
+    tier: premium
+    dietCategory: meat
+  - id: premium4
+    displayName: "\uC5D0\uBA54\uB784\uB4DC"
+    sprite: {fileID: 21300000, guid: 157fbb5abb147b740a73c2ac4d8618f6, type: 3}
+    tier: premium
+    dietCategory: veg
+  - id: premium5
+    displayName: "\uBB34\uC9C0\uAC1C"
+    sprite: {fileID: 21300000, guid: 3cf2fad6161dd3846baf4b44a38f10a1, type: 3}
+    tier: premium
+    dietCategory: dessert
+  - id: premium9
+    displayName: "\uBC31\uAE08"
+    sprite: {fileID: 21300000, guid: b9f08b3b222a9c848bdf24b16232e1d6, type: 3}
+    tier: premium
+    dietCategory: instant
+  - id: premium10
+    displayName: "\uC624\uB85C\uB77C"
+    sprite: {fileID: 21300000, guid: b63f5b73a5f3bee4182746ed813802ef, type: 3}
+    tier: premium
+    dietCategory: dessert
+  - id: bv1
+    displayName: "\uC0C8\uC2F9"
+    sprite: {fileID: 21300000, guid: 81238fa052c39db42ae92a626a27ea02, type: 3}
+    tier: basic
+    dietCategory: veg
+  - id: bv2
+    displayName: "\uCF69\uCF69"
+    sprite: {fileID: 21300000, guid: 41b89c455b02c9847995e8b15981ee51, type: 3}
+    tier: basic
+    dietCategory: veg
+  - id: bv3
+    displayName: "\uD480\uC78E"
+    sprite: {fileID: 21300000, guid: 14a5f96c5c1700b4ba6ac877bf99fed8, type: 3}
+    tier: basic
+    dietCategory: veg
+  - id: bm2
+    displayName: "\uC2A4\uD551\uD06C\uC2A4"
+    sprite: {fileID: 21300000, guid: 5e4447679d1d0fe44bf88c88cfd4db2b, type: 3}
+    tier: basic
+    dietCategory: meat
+    stationary: 1
+  - id: bi2
+    displayName: "\uCF5C\uB77C"
+    sprite: {fileID: 21300000, guid: 99dcd5bc0eaf37742b3bc533712dc336, type: 3}
+    tier: basic
+    dietCategory: instant
+  - id: bd1
+    displayName: "\uB9C8\uCE74\uB871"
+    sprite: {fileID: 21300000, guid: 2389d8a60c430204a89a1b4a0d86b8be, type: 3}
+    tier: basic
+    dietCategory: dessert
+  - id: bd3
+    displayName: "\uCEF5\uCF00\uC775"
+    sprite: {fileID: 21300000, guid: 4dd4cf463f810164ea53dadc9122af43, type: 3}
+    tier: basic
+    dietCategory: dessert
+  - id: rd1
+    displayName: "\uB9CC\uC96C"
+    sprite: {fileID: 21300000, guid: 846c8f085437aab4ebdf66a53b0c4237, type: 3}
+    tier: rare
+    dietCategory: dessert
+  - id: rd2
+    displayName: "\uC19C\uC0AC\uD0D5"
+    sprite: {fileID: 21300000, guid: 8d140da2ae4f0a6469bde04735f0abf0, type: 3}
+    tier: rare
+    dietCategory: dessert
+  - id: rd3
+    displayName: "\uCD08\uCF54"
+    sprite: {fileID: 21300000, guid: 33cc32db8b90dec4a945e5ff64cadaa7, type: 3}
+    tier: rare
+    dietCategory: dessert
+  - id: pv1
+    displayName: "\uC591\uC0C1\uCD94"
+    sprite: {fileID: 21300000, guid: 560a092466c55a147b4646c131345948, type: 3}
+    tier: premium
+    dietCategory: veg
+  - id: pv3
+    displayName: "\uBB34\uBB34"
+    sprite: {fileID: 21300000, guid: 671219e6e4da30d4989a1e6d80c3e982, type: 3}
+    tier: premium
+    dietCategory: veg
+  - id: pm3
+    displayName: "\uB9E4\uBA38\uB4DC"
+    sprite: {fileID: 21300000, guid: 6ad9c81ae72dd94459278b174a12c541, type: 3}
+    tier: premium
+    dietCategory: meat
+  - id: pi1
+    displayName: "\uB124\uC628"
+    sprite: {fileID: 21300000, guid: 522350d59abba664faaba7e6df638c9b, type: 3}
+    tier: premium
+    dietCategory: instant
+  - id: pd3
+    displayName: "\uADF8\uB9AC\uD540"
+    sprite: {fileID: 21300000, guid: 6e5b700b87048044c814821f827a8fc6, type: 3}
+    tier: premium
+    dietCategory: dessert
+  - id: worldtree_fairy
+    displayName: "\uC138\uACC4\uC218 \uC694\uC815"
+    sprite: {fileID: 21300000, guid: ef49a5c278138c848a58df3788703e1c, type: 3}
+    tier: secret
+    dietCategory: secret
+    stationary: 1
+  - id: flame_lion
+    displayName: "\uB808\uC628"
+    sprite: {fileID: 21300000, guid: 7906f79ba4fa9d943a1607d3b1f59ae8, type: 3}
+    tier: secret
+    dietCategory: secret
+  - id: dust_monster
+    displayName: "\uC0BF\uC2F1"
+    sprite: {fileID: 21300000, guid: b9fc23d0907adb44a8561932be281658, type: 3}
+    tier: secret
+    dietCategory: secret
+  - id: snow_spirit
+    displayName: "\uB208\uAF43 \uC815\uB839"
+    sprite: {fileID: 21300000, guid: 7234183b2af040fcbbfe0446c98aab3e, type: 3}
+    tier: secret
+    dietCategory: secret

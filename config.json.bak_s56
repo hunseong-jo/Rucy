@@ -1,0 +1,371 @@
+{
+  "_설명": "위에서부터 순서대로 시도합니다. 한도초과(429)/장애/네트워크 끊김이면 자동으로 다음 모델로 내려갑니다. 서비스가 종료되면 해당 블록만 지우세요. ⚠️이 순서와 deep 표시는 '/벤치'가 실제 측정 결과대로 자동으로 다시 씁니다 — 라벨에 '주력' 같은 역할을 적지 마세요(순위가 바뀌면 거짓말이 됩니다).",
+  "models": [
+    {
+      "label": "Cerebras zai-glm-4.7",
+      "base_url": "https://api.cerebras.ai/v1",
+      "model": "zai-glm-4.7",
+      "_참고": "무료 하루 100만 토큰, 카드 불필요(cloud.cerebras.ai). 초당 2600토큰으로 매우 빠릅니다. 세션41 벤치에서 zai-glm-4.7이 3/3(1~2.6초)로 1위 — gemma-4-31b도 준수, gpt-oss-120b는 한도에 잘 걸립니다. ⚠️무료는 컨텍스트 8192 제한 — context 필드 덕에 도구 명세는 요약본(COMPACT_SPECS)이 갑니다.",
+      "key_file": "keys/cerebras.txt",
+      "context": 8192
+    },
+    {
+      "label": "Gemini 3 Flash",
+      "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "model": "gemini-3-flash-preview",
+      "timeout": 120,
+      "_참고": "deep:true = 어려운 질문일 때 이 모델부터 씁니다. 느리지만(15~33초) 정확합니다. gemini-3.5-flash·3.1-pro는 무료 일일 한도가 너무 빨리 말라서(429) 내렸습니다. 모델마다 한도가 따로라 preview 쪽이 살아있습니다. vision:true = 이미지를 볼 수 있습니다(Gemini 계열은 전부 가능).",
+      "key_file": "keys/gemini.txt",
+      "deep": true,
+      "vision": true
+    },
+    {
+      "label": "NVIDIA gpt-oss-120b",
+      "base_url": "https://integrate.api.nvidia.com/v1",
+      "model": "openai/gpt-oss-120b",
+      "_참고": "build.nvidia.com 무료(키 하나로 카탈로그 전체, 분당 40회·크레딧 1000). 프로브 실측(2026-07-15): 도구 호출·한국어 정확, 1.2~1.5초. ⚠️'Groq의 gpt-oss-120b 금지' 메모는 Groq의 분당 8000토큰 제한 얘기 — NVIDIA 호스팅에는 그 제한이 없어 멀쩡합니다. 크레딧이 마르면 402/403이 나며, 잔량은 build.nvidia.com 대시보드에서 확인.",
+      "key_file": "keys/nvidia.txt"
+    },
+    {
+      "label": "NVIDIA nemotron-3-super",
+      "base_url": "https://integrate.api.nvidia.com/v1",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "_참고": "NVIDIA 자체 플래그십(120b). 프로브 실측: 도구 호출·한국어 정확, 1.2~1.6초. gpt-oss-120b와 같은 키·같은 한도를 나눠 씁니다.",
+      "key_file": "keys/nvidia.txt"
+    },
+    {
+      "label": "OpenRouter 무료 라우터",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openrouter/free",
+      "_참고": "openrouter.ai에서 키 발급(카드 불필요). 'openrouter/free'는 무료 모델 중 요청에 필요한 기능(도구 호출 등)을 지원하는 것만 골라 자동 배정하는 라우터라, 개별 모델이 없어져도 알아서 다른 걸 씁니다. 한도는 분당 20회·하루 200회.",
+      "key_file": "keys/openrouter.txt"
+    },
+    {
+      "label": "Groq qwen3-32b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "model": "qwen/qwen3-32b",
+      "key_file": "keys/groq.txt"
+    },
+    {
+      "label": "Groq qwen3.6-27b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "model": "qwen/qwen3.6-27b",
+      "_참고": "세션41 벤치(도구호출·정답·속도) 1위. 3/3 정답에 1.4~3초로 가장 빠르고 안정적이라 주력으로 올렸습니다. 대안 qwen/qwen3-32b도 3/3이지만 조금 느리고 한도에 더 잘 걸립니다. ⚠️openai/gpt-oss-120b는 분당 8000토큰 제한이라 도구 명세를 실으면 요청 자체가 413으로 거부됩니다(쓰지 말 것). llama-3.3-70b는 tool_use_failed 빈발. vision:true = 세션42 실측으로 이미지를 볼 수 있음을 확인(0.7초). qwen3-32b·Cerebras·OpenRouter·로컬은 눈이 없습니다.",
+      "key_file": "keys/groq.txt",
+      "vision": true
+    },
+    {
+      "label": "NVIDIA mistral-medium-3.5",
+      "base_url": "https://integrate.api.nvidia.com/v1",
+      "model": "mistralai/mistral-medium-3.5-128b",
+      "timeout": 120,
+      "_참고": "프로브 실측: 도구 호출·한국어 정확하나 느림(14+7초) — 위가 다 죽었을 때의 온라인 예비. NVIDIA 키·한도 공유.",
+      "key_file": "keys/nvidia.txt"
+    },
+    {
+      "label": "로컬 Ollama (최후의 보루 · 인터넷 없어도 작동)",
+      "base_url": "http://localhost:11434/v1",
+      "model": "qwen3:4b",
+      "timeout": 300,
+      "_참고": "속도(qwen2.5:3b, 10초)보다 정확성(qwen3:4b, 2분)을 택했습니다. 3B급은 한국어 도구 호출이 불안정해 사실을 지어냅니다(북한산 높이를 2,743m라고 단언 — 정답 836.5m). qwen3:4b는 VRAM 4GB를 넘겨 33%가 CPU로 흘러 느리지만, 한국어로 제대로 검색해 정답을 냅니다. 최후의 보루는 거의 안 쓰이므로 느려도 정확한 쪽이 맞습니다. EXAONE3.5는 Ollama에서 도구 호출 미지원(400).",
+      "reminder": "너는 지식이 부족한 작은 모델이다. 산의 높이·인구·가격·날짜·최신 정보처럼 '사실'을 묻는 질문에는 절대 네 기억에 의존하지 마라. 반드시 web_search 도구로 확인한 뒤 답하고, 검색해도 안 나오면 '모르겠습니다'라고 답하라. 지어내는 것은 최악이다. web_search 검색어는 사용자가 쓴 한국어 단어를 그대로 써라(영어로 번역하지 마라). 답변은 반드시 한국어로만 써라.",
+      "key_file": null
+    }
+  ],
+  "_이름설명": "비서의 이름. 이 한 줄만 고치면 화면·대화기록·자기소개가 전부 따라 바뀝니다. persona 안의 {name}도 이 값으로 치환됩니다.",
+  "name": "루시",
+  "persona": "너는 사용자의 개인 비서 '{name}'다. 한국어로 짧고 명확하게, 존댓말로 답한다. 겉치레 인사말은 생략하고 본론부터 말한다. 사용자가 이름을 부르면 그게 너다.\n\n원칙:\n- 도구를 쓸 수 있으면 추측하지 말고 반드시 도구로 확인한 뒤 답한다. (파일 내용, 오늘 날짜, 최신 정보 등)\n- 모르면 모른다고 말한다. 지어내지 않는다.\n- 사용자가 기억해달라고 한 것, 또는 앞으로도 계속 쓸 사실은 remember 도구로 저장한다.\n- 기억을 지울 때는 반드시 forget 도구를 쓴다. 도구를 쓰지 않고 '삭제했다'고 답하는 것은 거짓말이므로 절대 하지 않는다.\n- 파일을 덮어쓰거나 명령을 실행하기 전에는 무엇을 할지 한 줄로 먼저 말한다.\n- 숫자 계산은 암산하지 말고 calc나 run_python으로 확인한다. 정확도가 중요한 조사는 research를 쓴다.\n- 터미널에 출력되므로 LaTeX 수식 기호($, \\times, \\frac)는 쓰지 않는다. 곱하기는 ×, 나누기는 ÷로 쓴다.\n\n게임 기획 보조:\n사용자는 게임을 만든다(모바일 힐링 게임 '샐러드팜', 협동 게임 '알약'). 기획 관련 질문에는 잡담이 아니라 기획자로서 답한다.\n- 기획 질문(재미·시스템·밸런스·기획서·레벨·보상·경제·유저 동기 등)이 나오면 **답하기 전에 search_knowledge로 기획 교재를 찾아본다.** 지식 창고에 게임 기획 교재 13종이 들어 있다(이상균 기획 튜토리얼·기획서 작성법, GDC2008 기획서 작성법, 구승모 '게임제작개론' #1·#2·#4밸런싱·#5·#6·#7, 김준태 레벨 디자인, 모바일 기획 실습, 매출 시뮬레이션, 밸런싱 핸드북). 인용할 때 저자는 파일명 끝에 있다 — 본문에 나오는 인명을 저자로 착각하지 마라.\n- 기획서를 리뷰할 때는 칭찬이 아니라 **구멍**을 찾는다. 빠진 항목, 모순, '미정'인 채 방치된 것, 수치 없는 서술('많이 준다', '적당히')을 짚는다. 좋게 말하려고 문제를 흐리지 않는다.\n- 수치·밸런싱은 암산하지 않는다. run_python으로 실제 계산해 **표로 펼쳐서** 보여준다. 모르는 값은 지어내지 말고 사용자에게 묻는다. '적당한지'는 사용자가 판단하므로, 루시는 '레벨 10까지 63시간 걸린다'까지만 말한다.\n- 아이디어를 낼 때는 뭉뚱그리지 않는다. '재미있게 하자'가 아니라 구체적인 규칙·수치·플레이어 행동으로 말한다.\n- 사용자는 숙제성 콘텐츠(일일 퀘스트, 데일리 리셋, 스트릭, 기한)를 명시적으로 거절했다. 힐링 게임 철학이므로 그런 방향은 제안하지 않는다. '기다리면 쌓이는' 방향을 선호한다.",
+  "_검색설명": "위에서부터 시도. HTML을 긁는 방식(DuckDuckGo 등)은 전부 봇 차단으로 막혀서 못 씁니다. Tavily 무료 키(카드 불필요, 월 1000회)를 넣으면 진짜 웹 검색이 열리고, 키가 없어도 위키백과가 항상 받쳐줍니다. ⚠️Brave는 2026년 초 무료 티어를 폐지하고 카드 등록 필수 + 크레딧 초과 시 상한 없이 청구되므로 일부러 뺐습니다(코드는 tools.py에 남아 있으니 필요하면 되살릴 것).",
+  "search_backends": [
+    {
+      "type": "tavily",
+      "key_file": "keys/tavily.txt"
+    },
+    {
+      "type": "wikipedia"
+    }
+  ],
+  "_기억검색설명": "질문과 의미가 가까운 기억만 골라 넣습니다. memory_rephrase=1차 검색의 1등 유사도가 memory_confident_score에 못 미치면(=자신 없으면) 모델에게 검색어를 다시 뽑게 해서 한 번 더 찾고 결과를 합칩니다. '앱 서명할 때 그거 필요하지 않았나?'처럼 빈손이 아니라 '엉뚱한 걸 낮은 점수로' 가져오는 게 실제 실패 양상이라, 빈손 조건만으로는 못 잡습니다.",
+  "memory_rephrase": true,
+  "memory_confident_score": 0.6,
+  "embed_model": "bge-m3",
+  "memory_top_k": 4,
+  "memory_always_all_under": 8,
+  "memory_min_score": 0.45,
+  "memory_relative_ratio": 0.85,
+  "memory_dedupe_score": 0.9,
+  "_음성설명": "프롬프트에 '음성' 또는 '/v'를 입력하면 마이크 녹음 → Groq whisper-large-v3로 받아쓰기. 녹음은 윈도우 기본 기능(winmm)이라 설치할 게 없고, 받아쓰기는 Groq에서 하므로 VRAM을 쓰지 않습니다.",
+  "voice": {
+    "enabled": true,
+    "key_file": "keys/groq.txt",
+    "model": "whisper-large-v3",
+    "language": "ko",
+    "_장치설명": "device: 들을 마이크(이름 일부 또는 번호). 윈도우 기본 장치가 실제 마이크가 아니어서(기본=Focusrite, 목소리=Galaxy Buds — 세션56 실측) 지정. 그 장치가 없으면(버즈 끈 날) 기본 장치로 자동 폴백. 장치 목록은 '/음성모드 시험'이 보여줌.",
+    "device": "Buds"
+  },
+  "_읽어주기설명": "'/읽기'로 켜고 끕니다. 답을 윈도우 내장 음성(SAPI)으로 읽습니다 — 설치할 것도, 인터넷도, GPU도 필요 없습니다. 말하는 동안에도 바로 다음 질문을 할 수 있고, 엔터만 치면 즉시 멈춥니다. voice는 이 PC에 깔린 음성 이름('/읽기 목록'으로 확인). 신형 OneCore 음성(Microsoft Heami)은 16kHz라 오히려 뭉개져 들려서 22kHz인 구형 Desktop 음성을 씁니다. rate는 -10~10(0=보통), max_chars를 넘는 긴 답은 문장 끝에서 자르고 '나머지는 화면을 보세요'로 마무리합니다 — 긴 코드 설명을 5분씩 듣고 있을 이유가 없습니다.",
+  "tts": {
+    "enabled": true,
+    "engines": [
+      "melo",
+      "google",
+      "sapi"
+    ],
+    "google": {
+      "lang": "ko",
+      "timeout": 10
+    },
+    "voice": "Microsoft Heami Desktop",
+    "rate": 1,
+    "volume": 100,
+    "max_chars": 600,
+    "skip_code": true,
+    "melo": {
+      "url": "http://127.0.0.1:8767/tts",
+      "timeout": 120,
+      "chunk": 150,
+      "first_chunk": 30
+    }
+  },
+  "_라우팅설명": "쉬운 질문(짧고 단순)은 빠른 주력(Groq, 2초)으로 즉답하고, 어려운 질문만 deep:true 모델을 앞으로 당깁니다. 어느 쪽이든 실패 시 폴백은 그대로 작동합니다.",
+  "routing": {
+    "enabled": true,
+    "easy_max_len": 30
+  },
+  "_쿨다운설명": "한도 초과(429)를 맞은 모델은 이 시간(분)만큼 건너뜁니다. 없으면 질문마다 죽은 모델을 한 번씩 찔러보고 실패한 뒤에야 다음으로 내려가서 매번 느려집니다. too_big은 분당 토큰 한도(413)라 금방 풀립니다. too_long은 '대화가 그 두뇌의 컨텍스트 한계보다 길어진 경우'(Cerebras는 8192) — 대화는 길어지기만 하므로 다음 단계에도 똑같이 실패합니다. 이게 없으면 도구를 쓸 때마다 매 단계 한 번씩 찔러보고 400을 맞느라 시간을 버립니다.",
+  "quota_cooldown_min": {
+    "quota": 30,
+    "too_big": 2,
+    "too_long": 20
+  },
+  "_그림설명": "4GB VRAM으로는 Flux를 로컬에서 못 돌립니다. 그래서 2단계로 나눕니다. 1단계 draw=Pollinations의 Flux로 뼈대를 뽑고(무료·키 불필요·GPU 연산 0), 2단계 restyle=로컬 SD 1.5 WebUI에 img2img로 던져 내 병합 화풍으로 덧칠합니다. WebUI가 꺼져 있으면 1단계 결과가 그대로 최종본이 됩니다. WebUI 실행: webui-user.bat에 COMMANDLINE_ARGS=--medvram --xformers --api",
+  "image": {
+    "save_dir": "C:/Users/user/Desktop",
+    "flux": {
+      "endpoint": "https://image.pollinations.ai/prompt/",
+      "model": "flux",
+      "width": 1024,
+      "height": 1024,
+      "timeout": 180
+    },
+    "local_sd": {
+      "url": "http://127.0.0.1:7860",
+      "denoising_strength": 0.35,
+      "steps": 20,
+      "cfg_scale": 7.0,
+      "size": 512,
+      "negative_prompt": "easynegative, worst quality, low quality",
+      "_참고": "GTX 1650(16xx)은 fp16에서 NaN을 뱉는 결함이 있어 WebUI를 fp32(--no-half --precision full)로 돌립니다. 그래서 느립니다 — 512px·denoise 0.35 한 장에 약 5분(스텝당 63초). timeout을 넉넉히 잡지 않으면 다 그려놓고 시간 초과로 버립니다.",
+      "timeout": 1200
+    }
+  },
+  "_요약설명": "exit 할 때마다 요약 모델을 부르면 무료 한도가 아깝습니다. 짧은 잡담이면 건너뜁니다. 단, 짧아도 '기억/예약/좋아함/매주...' 같은 신호가 있으면 반드시 요약합니다(한마디로 던진 중요한 사실을 놓치지 않기 위해).",
+  "summary": {
+    "min_user_turns": 3,
+    "min_chars": 60
+  },
+  "_생각설명": "어려운 질문일 때만 켜집니다. plan=답하기 전에 무엇을 어떤 도구로 확인할지 먼저 계획(추가 호출 없음). review=답을 내보내기 전에 도구 결과와 대조해 스스로 감수(모델 호출 1회 추가). 쉬운 질문은 그대로 즉답합니다.",
+  "deliberate": {
+    "plan": true,
+    "review": true
+  },
+  "_구글설명": "지메일·구글 캘린더 연동. 권한을 일부러 좁게 잡았습니다 — 메일은 '읽기 전용'(루시가 사용자 이름으로 메일을 보내는 건 되돌릴 수 없습니다), 캘린더는 읽기+쓰기(잘못 넣어도 지우면 됩니다. 그래도 넣기 전엔 확인을 받습니다). 쓰려면 keys/google_credentials.json이 필요합니다 — 구글 클라우드 콘솔에서 'OAuth 클라이언트 ID(데스크톱 앱)'를 만들어 내려받아 두세요(자세한 안내는 루시에게 '메일 확인해줘'라고 하면 나옵니다). 첫 실행 때 브라우저가 열려 '허용'을 한 번 누르면, 그다음부터는 토큰이 저장돼 조용히 갱신됩니다.",
+  "google": {
+    "enabled": true
+  },
+  "_문서검색설명": "내 PC에 이미 있는 문서를 내용으로 찾습니다('작년에 쓴 그 계약서 어디 있지?'). 지식 창고(knowledge/)와 다릅니다 — 지식 창고는 내가 골라 넣은 자료만, 이건 넣은 적 없는 파일까지 찾습니다. PDF·워드·엑셀·PPT 속 글자를 뒤집니다(구버전 .doc/.hwp는 파서가 없어 못 읽음). 임베딩을 안 쓰는 이유: 파일 수백 개를 전부 임베딩하면 색인에 몇십 분 걸리고 질문마다 Ollama를 깨워야 하는데, 파일 찾기는 대개 낱말로 충분합니다. 색인은 처음 검색할 때 만들고, 그다음부터는 수정된 파일만 다시 읽습니다(증분). refresh_hours마다 자동 갱신하며 '/문서색인'으로 강제할 수 있습니다. roots에 폴더를 추가하면 범위가 늘어납니다.",
+  "filesearch": {
+    "enabled": true,
+    "roots": [
+      "C:/Users/user/Desktop",
+      "C:/Users/user/Documents",
+      "C:/Users/user/Downloads"
+    ],
+    "max_mb": 30,
+    "refresh_hours": 24
+  },
+  "_일꾼설명": "'/일 <시킬 일>'이라고 하면(또는 '알아서 끝까지 해줘' 같은 말) 한 번의 문답으로 끝내지 않고, 계획을 세워 한 단계씩 실행하고 단계마다 스스로 검증해 끝까지 해냅니다. verify가 핵심입니다 — 모델은 파일을 안 만들어 놓고도 '만들었습니다'라고 태연히 말하므로, 도구가 돌려준 근거와 대조해 완료를 판정하고 아니면 이유를 알려주며 다시 시킵니다. max_steps=계획 단계 수 상한, retries=한 단계를 몇 번까지 다시 시도할지, max_minutes=전체 시간 상한(폭주 방지). 단계마다 모델을 2번 이상 부르므로 무료 한도를 평소보다 빨리 씁니다.",
+  "worker": {
+    "enabled": true,
+    "max_steps": 6,
+    "retries": 2,
+    "max_minutes": 12,
+    "verify": true
+  },
+  "_실수노트설명": "사용자가 '아니 그거 틀렸어'라고 지적하면 그 일에서 교훈 한 줄을 뽑아 memory/lessons.md에 적고, 다음에 비슷한 질문이 오면 자동으로 다시 읽습니다(notes.md=개인 사실, knowledge/=프로젝트 지식과 통을 분리 — 실수 노트는 '사실'이 아니라 '행동 지침'이라 섞으면 검색이 흐려집니다). min_score를 기억 검색(0.45)보다 높게 잡은 이유: 관련도 낮은 교훈이 딸려오면 매 질문에 엉뚱한 잔소리가 붙습니다. '/교훈'으로 목록을 보고 '/교훈 삭제 <말>'로 지웁니다. from_work=일꾼 모드에서 검사관에게 퇴짜 맞았다가 고쳐서 통과하면, 사용자 지적 없이도 그 차이를 교훈으로 적습니다(일회성 실수는 모델이 걸러 안 적습니다).",
+  "lessons": {
+    "enabled": true,
+    "from_work": true,
+    "top_k": 2,
+    "min_score": 0.55,
+    "dedupe_score": 0.9
+  },
+  "_비전설명": "이미지 파일 경로가 섞인 질문(예: 'C:/Users/user/Desktop/에러.png 이거 무슨 오류야?')이면 자동으로 그림을 실어 보냅니다. '/보기 <경로> <질문>'으로 명시할 수도 있습니다. ⚠️눈이 달린 모델('vision': true)에만 보냅니다 — 눈 없는 모델은 400으로 거절하거나 더 나쁘게는 이미지를 무시하고 지어냅니다. 세션42 실측: Groq qwen3.6-27b·Gemini 계열=가능, Cerebras·qwen3-32b·OpenRouter·로컬=불가. 이미지가 실린 요청에 도구 명세까지 함께 실으면 거절하는 모델이 있어, 보는 턴에는 도구를 끕니다(그 답이 대화에 남으므로 이어지는 질문에서는 평소대로 도구를 씁니다).",
+  "vision": {
+    "enabled": true,
+    "max_mb": 12
+  },
+  "_매일설명": "작업 스케줄러가 1분마다 부르는 notify.py가, 예약을 보는 김에 '오늘 아직 안 한 일'도 확인합니다(때가 아니면 즉시 끝나므로 부담 없음). briefing.at에 아침 브리핑(오늘 일정+어제 이야기+관심사 소식을 루시가 생각해서 말함), knowledge_sync.at에 지식 창고 동기화(클로드가 갱신한 노트를 가져오고 바뀐 조각만 미리 임베딩 — 안 하면 루시가 옛 정보를 말합니다). catch_up_hours는 '늦게라도 한 번'의 한계 — 컴퓨터를 늦게 켰으면 그때 하되, 밤 11시에 '좋은 아침'이라고 하지는 않게 합니다. topics는 브리핑에 넣을 관심사(웹 검색). 브리핑에는 날씨·집 앞 버스·일정·할 일·메일·어제 이야기가 들어갑니다 — 끄려면 enabled를 false로.",
+  "daily": {
+    "briefing": {
+      "enabled": true,
+      "at": "08:00",
+      "catch_up_hours": 6,
+      "news": true,
+      "topics": [
+        "AI 업계",
+        "게임 개발"
+      ]
+    },
+    "knowledge_sync": {
+      "enabled": true,
+      "at": "05:00",
+      "catch_up_hours": 18
+    },
+    "_문서색인설명": "PC 문서 색인(search_files용)을 매일 새벽 증분 갱신합니다. 안 하면 색인이 '24시간 안 넘음' 규칙에 걸려 어제 받은 파일을 못 찾습니다. 검색이 빈손일 때도 즉석에서 한 번 증분 갱신합니다.",
+    "filesindex": {
+      "enabled": true,
+      "at": "05:05",
+      "catch_up_hours": 18
+    },
+    "_자가점검설명": "하루 한 번 루시가 제 몸을 점검하고(로컬 목소리 서버·Ollama·알림 스케줄러·구글 연동과 토큰 권한·웹 서버·디스크 여유·받아쓰기 키·ffmpeg·Tailscale), 꺼진 서버는 다시 켭니다. 루시를 켤 때와 '/점검'에서도 돌고, 대화에서 '목소리가 왜 이래?'라고 물으면 루시가 스스로 self_check 도구로 진단합니다.",
+    "selfcheck": {
+      "enabled": true,
+      "at": "05:10",
+      "catch_up_hours": 18
+    },
+    "_거두기설명": "종료 요약은 exit·Ctrl+C만 잡습니다. 터미널 창을 X로 닫거나 정전이 나면, 그리고 웹(폰)으로만 대화한 날은 '기억할 사실'이 뽑히지 않은 채 남습니다. 매일 새벽 지난 days일 중 아직 요약 안 된 대화를 찾아 거둡니다. 이미 요약된 날을 또 봐도 [기존 기억]과 임베딩 중복 제거가 걸러 줍니다.",
+    "recover": {
+      "enabled": true,
+      "at": "05:15",
+      "catch_up_hours": 18,
+      "days": 3
+    },
+    "_스스로배우기설명": "매일 새벽, 어제 대화를 되읽고 ①지적받지 않은 실수에서도 교훈을 뽑아 실수 노트에 적고(하루 최대 max_lessons개) ②얕게 답했던 주제 하나를 스스로 조사해 지식 창고에 selfstudy_ 노트로 남깁니다(research=false면 복습만). 지금 바로는 '/복습'과 '/공부 <주제>'.",
+    "study": {
+      "enabled": true,
+      "at": "05:30",
+      "catch_up_hours": 18,
+      "max_lessons": 2,
+      "research": true
+    },
+    "_기억정리설명": "every_days마다 한 번, 쌓인 기억(notes.md·lessons.md)에서 같은 주제를 합치고 지난 일정을 지웁니다. 모델은 제안만 하고 코드가 검증·적용하며, 원본은 memory/backups/에 남습니다. min_items 미만이면 건너뜀. max_touch_ratio는 안전장치 — 제안이 이 비율을 넘게 건드리면 통째로 버립니다. 지금 바로 보면서 하려면 '/기억정리'.",
+    "consolidate": {
+      "enabled": true,
+      "at": "05:20",
+      "catch_up_hours": 18,
+      "every_days": 7,
+      "min_items": 10,
+      "max_touch_ratio": 0.5
+    },
+    "_백업설명": "every_days마다 한 번, 루시를 되살리는 데 필요한 전부(memory·knowledge·keys·config.json)를 zip으로 dest에 둡니다. 최근 keep개만 보관. 복구 = zip을 새 my-agent 폴더에 풀고 setup_check.py.",
+    "backup": {
+      "enabled": true,
+      "at": "05:40",
+      "catch_up_hours": 18,
+      "every_days": 7,
+      "dest": "G:\\내 드라이브\\루시백업",
+      "keep": 4
+    },
+    "_벤치설명": "every_days마다 한 번 두뇌 순위를 실측해 memory/bench_reports/에 보고서만 남깁니다 — config는 절대 자동으로 바꾸지 않습니다(적용은 '/벤치'에서 사람이 y/N). 순위가 달라졌으면 '/상태'가 알려줍니다. 벤치는 실제 호출이라 무료 한도를 써서 새벽 일과 중 가장 뒤 시각에 둡니다.",
+    "bench": {
+      "enabled": true,
+      "at": "05:50",
+      "catch_up_hours": 18,
+      "every_days": 30
+    }
+  },
+  "_상황알림설명": "루시가 먼저 말을 겁니다(notify.py 1분 주기, 루시 창이 꺼져 있어도 돎). calendar=구글 캘린더 일정 minutes_before분 전에 소리+창 알림 — 예약을 안 걸어도 캘린더만 봐줍니다(구글에는 refresh_min마다 한 번만 묻고 캐시. 지난 일정은 안 알림). umbrella=아침 at시에 오늘 강수확률 min_prob% 이상(또는 예상 강수 min_mm mm 이상)이면 우산 알림 — 비 안 오는 날은 조용합니다.",
+  "alerts": {
+    "enabled": true,
+    "calendar": {
+      "enabled": true,
+      "minutes_before": 30,
+      "refresh_min": 10
+    },
+    "umbrella": {
+      "enabled": true,
+      "at": "07:30",
+      "catch_up_hours": 3,
+      "min_prob": 40,
+      "min_mm": 3
+    }
+  },
+  "_화면설명": "'지금 화면 좀 봐줘'라고 하면 모니터를 찍어 눈(비전)에 그대로 넘깁니다. '/화면 <질문>'으로 확실하게 찍을 수도 있습니다. delay는 찍기 전에 기다리는 초 — 터미널에서 말을 걸면 맨 앞 창은 루시의 콘솔이라, 바로 찍으면 보여주려던 창 대신 루시 자신을 보게 됩니다(그래서 기본 3초). '이 창만'이라고 하면 맨 앞 창만 찍습니다. max_width는 4K를 그대로 실어 보내 토큰 한도를 태우지 않도록 줄이는 크기(글자가 뭉개지면 오류 메시지를 못 읽으니 너무 낮추지 말 것). 캡처는 my-agent/screenshots에 최근 20장만 남습니다.",
+  "screen": {
+    "enabled": true,
+    "delay": 3,
+    "max_width": 1920
+  },
+  "_음성모드설명": "'/음성모드' — 연속 음성 대화. 말이 끝나면(침묵 silence_sec초) 알아서 받아쓰고 답하며, 답을 다 읽은 뒤 다시 듣습니다(읽는 중에 들으면 스피커의 제 목소리를 제가 듣게 되므로). 끝내는 법: '그만'이라고 말하기·엔터·말없이 idle_rounds번. min_threshold는 '말소리로 인정할 최소 음량' — 마이크마다 달라서 '/음성모드 시험'으로 재고 맞추세요(말할 때 음량이 이 값을 넘어야 합니다). 받아쓰기는 기존 음성 기능과 같은 Groq whisper라 녹음이 Groq로 전송됩니다.",
+  "talk": {
+    "enabled": true,
+    "silence_sec": 1.2,
+    "listen_timeout": 12,
+    "max_seconds": 30,
+    "idle_rounds": 3,
+    "_문턱설명": "버즈 실측(세션56 진단판): 말소리 RMS 24~114(버즈 자동 게인 탓에 날마다 출렁임 — 첫 측정 땐 117~251였음), 진짜 침묵 6~15. 문턱 = max(침묵 바닥 × noise_mult, min_threshold) ≈ 25~28 — 말 시작(24+)과 말 끝(컷오프 ~19가 침묵 6~15를 덮음)을 다 잡음. 수준 100인데도 조용한 건 버즈 블루투스 마이크 특성. 마이크를 바꾸면 '/음성모드 시험'으로 다시 잴 것.",
+    "min_threshold": 25,
+    "noise_mult": 2.5
+  },
+  "_유튜브설명": "'/유튜브 <주소>' 또는 '이 영상 요약해줘 <주소>' — 자막을 받아(영상은 안 내려받음) 요약 노트를 knowledge/youtube_*.md로 넣습니다. 그다음부터 영상 내용을 물으면 search_knowledge로 찾아 답합니다. 긴 영상은 chunk_chars 단위로 나눠 요약한 뒤 한 노트로 엮습니다(작은 컨텍스트 두뇌 보호). 정식 자막이 없으면 자동 생성 자막으로 물러서고 노트에 밝힙니다. ⚠️자막 주소는 유튜브 내부 API를 ANDROID 클라이언트로 불러야 살아 있습니다(웹 것은 빈 응답) — 갑자기 안 되면 youtube.py의 클라이언트 버전을 올려볼 것.",
+  "youtube": {
+    "enabled": true,
+    "chunk_chars": 6000
+  },
+  "_감시설명": "'/감시 <무엇이 되면>' 또는 '빌드 끝나면 알려줘' — 화면으로만 알 수 있는 일(유니티 빌드·다운로드·학습 진행바)의 끝을 루시가 대신 기다립니다. 떼어낸 프로세스가 interval_sec마다 화면을 찍어 눈 달린 두뇌에게 판정시키고, 이루어지면 소리+창으로 알립니다(오탐 방지로 recheck_sec 뒤 한 번 더 보고 두 번 연속일 때만). 확인 한 번 = 눈 모델 호출 1회라 무료 한도를 씁니다 — 긴 일은 interval_sec을 늘리세요. max_minutes가 지나면 못 봤다고 알리고 끝납니다. 한 번에 하나만, '/감시 중지'로 멈춥니다. mode는 화면캡처와 같은 규칙(screen=맨 앞 창이 있는 모니터).",
+  "watch": {
+    "enabled": true,
+    "interval_sec": 60,
+    "max_minutes": 60,
+    "recheck_sec": 5,
+    "mode": "screen"
+  },
+  "_컴퓨터조작설명": "'/컴퓨터 <시킬 일>'이라고 하면 화면을 찍어 보고 → 다음 한 동작을 정하고 → 진짜 마우스·키보드를 움직입니다. 일꾼('/일')과 다릅니다 — 일꾼은 도구로 일하고 이건 화면으로 일합니다(도구가 없는 유니티 에디터·웹사이트·그림판에도 손이 닿습니다). ⚠️되돌릴 수 없는 일이므로 시작 전에 반드시 y/N 허락을 받고, **웹 화면에서는 아예 거부합니다**(폰에서 원격으로 PC 마우스를 휘두르지 못하게). 눈이 달린 두뇌가 없으면 시작조차 하지 않습니다 — 화면을 못 보면 클릭 좌표를 지어내기 때문입니다. 글자 입력은 클립보드+Ctrl+V로 넣습니다(SendKeys는 한글 자모가 깨집니다 → 사용자의 클립보드 내용이 바뀝니다). max_actions=동작 수 상한(폭주·무한루프 방지), pause_sec=한 동작 뒤 화면이 반응할 때까지 기다리는 초(너무 짧으면 바뀌기 전 화면을 찍습니다).",
+  "computer": {
+    "enabled": true,
+    "max_actions": 12,
+    "pause_sec": 1.0
+  },
+  "_압축설명": "대화가 길어지면 토큰 한도를 넘겨 죽습니다(무료 Cerebras는 컨텍스트 8192라 가장 먼저 나가떨어짐). 오래된 턴을 모델이 요약해 한 덩어리로 치환하고 최근 keep_recent_turns개만 원문으로 남깁니다. max_chars는 '대화 전체 글자수'가 이 값을 넘으면 압축을 시작한다는 뜻입니다(한국어는 대략 글자수÷2가 토큰수).",
+  "context": {
+    "enabled": true,
+    "max_chars": 12000,
+    "keep_recent_turns": 6
+  },
+  "max_steps": 8,
+  "allowed_dirs": [
+    "C:/Users/user",
+    "C:/Users/user/Desktop"
+  ],
+  "weather": {
+    "location": "인천"
+  },
+  "_웹설명": "slow_after_seconds: 웹에서 한 턴이 이보다 오래 걸리면(영상 인코딩 등) 배경으로 넘기고, 폰이 /poll로 결과를 찾아갑니다 — 긴 도구 하나가 웹 루시 전체를 몇 분 침묵시키지 않게.",
+  "web": {
+    "enabled": true,
+    "slow_after_seconds": 20
+  },
+  "transit": {
+    "home_subway": {
+      "station": "동암",
+      "line": ""
+    },
+    "home": [
+      {
+        "region": "인천",
+        "stop": "구월초등학교",
+        "id": "165000833",
+        "bus": "532",
+        "note": "동암남부역 방면"
+      },
+      {
+        "region": "인천",
+        "stop": "남동소방서",
+        "id": "165000587",
+        "bus": "536",
+        "note": "동암남부역 방면"
+      }
+    ]
+  }
+}

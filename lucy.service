@@ -1,0 +1,17 @@
+[Unit]
+Description=Lucy AI Agent 24/7 Web & Background Service
+After=network.target network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/my-agent
+ExecStart=/usr/bin/python3 /opt/my-agent/web.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONUTF8=1
+
+[Install]
+WantedBy=multi-user.target

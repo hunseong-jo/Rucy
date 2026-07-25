@@ -1,0 +1,124 @@
+{
+  "_설명": "위에서부터 순서대로 시도합니다. 한도초과(429)/장애/네트워크 끊김이면 자동으로 다음 모델로 내려갑니다. 서비스가 종료되면 해당 블록만 지우세요.",
+  "models": [
+    {
+      "label": "Groq qwen3-32b (예비)",
+      "base_url": "https://api.groq.com/openai/v1",
+      "model": "qwen/qwen3-32b",
+      "key_file": "keys/groq.txt"
+    },
+    {
+      "label": "Cerebras (초고속 예비)",
+      "base_url": "https://api.cerebras.ai/v1",
+      "model": "zai-glm-4.7",
+      "_참고": "무료 하루 100만 토큰, 카드 불필요(cloud.cerebras.ai). 초당 2600토큰으로 매우 빠릅니다. 세션41 벤치에서 zai-glm-4.7이 3/3(1~2.6초)로 1위 — gemma-4-31b도 준수, gpt-oss-120b는 한도에 잘 걸립니다. ⚠️무료는 컨텍스트 8192 제한이라 긴 대화·리서치 결과가 실리면 거부될 수 있어 주력이 아닌 예비입니다.",
+      "key_file": "keys/cerebras.txt"
+    },
+    {
+      "label": "Groq qwen3.6-27b (주력)",
+      "base_url": "https://api.groq.com/openai/v1",
+      "model": "qwen/qwen3.6-27b",
+      "_참고": "세션41 벤치(도구호출·정답·속도) 1위. 3/3 정답에 1.4~3초로 가장 빠르고 안정적이라 주력으로 올렸습니다. 대안 qwen/qwen3-32b도 3/3이지만 조금 느리고 한도에 더 잘 걸립니다. ⚠️openai/gpt-oss-120b는 분당 8000토큰 제한이라 도구 명세를 실으면 요청 자체가 413으로 거부됩니다(쓰지 말 것). llama-3.3-70b는 tool_use_failed 빈발.",
+      "key_file": "keys/groq.txt"
+    },
+    {
+      "label": "Gemini 3 Flash (깊은 생각용)",
+      "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "model": "gemini-3-flash-preview",
+      "timeout": 120,
+      "_참고": "deep:true = 어려운 질문일 때 이 모델부터 씁니다. 느리지만(15~33초) 정확합니다. gemini-3.5-flash·3.1-pro는 무료 일일 한도가 너무 빨리 말라서(429) 내렸습니다. 모델마다 한도가 따로라 preview 쪽이 살아있습니다.",
+      "key_file": "keys/gemini.txt",
+      "deep": true
+    },
+    {
+      "label": "OpenRouter 무료 라우터",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openrouter/free",
+      "_참고": "openrouter.ai에서 키 발급(카드 불필요). 'openrouter/free'는 무료 모델 중 요청에 필요한 기능(도구 호출 등)을 지원하는 것만 골라 자동 배정하는 라우터라, 개별 모델이 없어져도 알아서 다른 걸 씁니다. 한도는 분당 20회·하루 200회.",
+      "key_file": "keys/openrouter.txt"
+    },
+    {
+      "label": "로컬 Ollama (최후의 보루 · 인터넷 없어도 작동)",
+      "base_url": "http://localhost:11434/v1",
+      "model": "qwen3:4b",
+      "timeout": 300,
+      "_참고": "속도(qwen2.5:3b, 10초)보다 정확성(qwen3:4b, 2분)을 택했습니다. 3B급은 한국어 도구 호출이 불안정해 사실을 지어냅니다(북한산 높이를 2,743m라고 단언 — 정답 836.5m). qwen3:4b는 VRAM 4GB를 넘겨 33%가 CPU로 흘러 느리지만, 한국어로 제대로 검색해 정답을 냅니다. 최후의 보루는 거의 안 쓰이므로 느려도 정확한 쪽이 맞습니다. EXAONE3.5는 Ollama에서 도구 호출 미지원(400).",
+      "reminder": "너는 지식이 부족한 작은 모델이다. 산의 높이·인구·가격·날짜·최신 정보처럼 '사실'을 묻는 질문에는 절대 네 기억에 의존하지 마라. 반드시 web_search 도구로 확인한 뒤 답하고, 검색해도 안 나오면 '모르겠습니다'라고 답하라. 지어내는 것은 최악이다. web_search 검색어는 사용자가 쓴 한국어 단어를 그대로 써라(영어로 번역하지 마라). 답변은 반드시 한국어로만 써라.",
+      "key_file": null
+    }
+  ],
+  "_이름설명": "비서의 이름. 이 한 줄만 고치면 화면·대화기록·자기소개가 전부 따라 바뀝니다. persona 안의 {name}도 이 값으로 치환됩니다.",
+  "name": "루시",
+  "persona": "너는 사용자의 개인 비서 '{name}'다. 한국어로 짧고 명확하게, 존댓말로 답한다. 겉치레 인사말은 생략하고 본론부터 말한다. 사용자가 이름을 부르면 그게 너다.\n\n원칙:\n- 도구를 쓸 수 있으면 추측하지 말고 반드시 도구로 확인한 뒤 답한다. (파일 내용, 오늘 날짜, 최신 정보 등)\n- 모르면 모른다고 말한다. 지어내지 않는다.\n- 사용자가 기억해달라고 한 것, 또는 앞으로도 계속 쓸 사실은 remember 도구로 저장한다.\n- 기억을 지울 때는 반드시 forget 도구를 쓴다. 도구를 쓰지 않고 '삭제했다'고 답하는 것은 거짓말이므로 절대 하지 않는다.\n- 파일을 덮어쓰거나 명령을 실행하기 전에는 무엇을 할지 한 줄로 먼저 말한다.\n- 숫자 계산은 암산하지 말고 calc나 run_python으로 확인한다. 정확도가 중요한 조사는 research를 쓴다.\n- 터미널에 출력되므로 LaTeX 수식 기호($, \\times, \\frac)는 쓰지 않는다. 곱하기는 ×, 나누기는 ÷로 쓴다.",
+  "_검색설명": "위에서부터 시도. HTML을 긁는 방식(DuckDuckGo 등)은 전부 봇 차단으로 막혀서 못 씁니다. Tavily 무료 키(카드 불필요, 월 1000회)를 넣으면 진짜 웹 검색이 열리고, 키가 없어도 위키백과가 항상 받쳐줍니다. ⚠️Brave는 2026년 초 무료 티어를 폐지하고 카드 등록 필수 + 크레딧 초과 시 상한 없이 청구되므로 일부러 뺐습니다(코드는 tools.py에 남아 있으니 필요하면 되살릴 것).",
+  "search_backends": [
+    {
+      "type": "tavily",
+      "key_file": "keys/tavily.txt"
+    },
+    {
+      "type": "wikipedia"
+    }
+  ],
+  "_기억검색설명": "질문과 의미가 가까운 기억만 골라 넣습니다. memory_rephrase=1차 검색의 1등 유사도가 memory_confident_score에 못 미치면(=자신 없으면) 모델에게 검색어를 다시 뽑게 해서 한 번 더 찾고 결과를 합칩니다. '앱 서명할 때 그거 필요하지 않았나?'처럼 빈손이 아니라 '엉뚱한 걸 낮은 점수로' 가져오는 게 실제 실패 양상이라, 빈손 조건만으로는 못 잡습니다.",
+  "memory_rephrase": true,
+  "memory_confident_score": 0.6,
+  "embed_model": "bge-m3",
+  "memory_top_k": 4,
+  "memory_always_all_under": 8,
+  "memory_min_score": 0.45,
+  "memory_relative_ratio": 0.85,
+  "memory_dedupe_score": 0.9,
+  "_음성설명": "프롬프트에 '음성' 또는 '/v'를 입력하면 마이크 녹음 → Groq whisper-large-v3로 받아쓰기. 녹음은 윈도우 기본 기능(winmm)이라 설치할 게 없고, 받아쓰기는 Groq에서 하므로 VRAM을 쓰지 않습니다.",
+  "voice": {
+    "enabled": true,
+    "key_file": "keys/groq.txt",
+    "model": "whisper-large-v3",
+    "language": "ko"
+  },
+  "_라우팅설명": "쉬운 질문(짧고 단순)은 빠른 주력(Groq, 2초)으로 즉답하고, 어려운 질문만 deep:true 모델을 앞으로 당깁니다. 어느 쪽이든 실패 시 폴백은 그대로 작동합니다.",
+  "routing": {
+    "enabled": true,
+    "easy_max_len": 30
+  },
+  "_쿨다운설명": "한도 초과(429)를 맞은 모델은 이 시간(분)만큼 건너뜁니다. 없으면 질문마다 죽은 모델을 한 번씩 찔러보고 실패한 뒤에야 다음으로 내려가서 매번 느려집니다. too_big은 분당 토큰 한도(413)라 금방 풀립니다.",
+  "quota_cooldown_min": {
+    "quota": 30,
+    "too_big": 2
+  },
+  "_그림설명": "4GB VRAM으로는 Flux를 로컬에서 못 돌립니다. 그래서 2단계로 나눕니다. 1단계 draw=Pollinations의 Flux로 뼈대를 뽑고(무료·키 불필요·GPU 연산 0), 2단계 restyle=로컬 SD 1.5 WebUI에 img2img로 던져 내 병합 화풍으로 덧칠합니다. WebUI가 꺼져 있으면 1단계 결과가 그대로 최종본이 됩니다. WebUI 실행: webui-user.bat에 COMMANDLINE_ARGS=--medvram --xformers --api",
+  "image": {
+    "save_dir": "C:/Users/user/Desktop",
+    "flux": {
+      "endpoint": "https://image.pollinations.ai/prompt/",
+      "model": "flux",
+      "width": 1024,
+      "height": 1024,
+      "timeout": 180
+    },
+    "local_sd": {
+      "url": "http://127.0.0.1:7860",
+      "denoising_strength": 0.35,
+      "steps": 20,
+      "cfg_scale": 7.0,
+      "size": 512,
+      "negative_prompt": "easynegative, worst quality, low quality",
+      "timeout": 600
+    }
+  },
+  "_요약설명": "exit 할 때마다 요약 모델을 부르면 무료 한도가 아깝습니다. 짧은 잡담이면 건너뜁니다. 단, 짧아도 '기억/예약/좋아함/매주...' 같은 신호가 있으면 반드시 요약합니다(한마디로 던진 중요한 사실을 놓치지 않기 위해).",
+  "summary": {
+    "min_user_turns": 3,
+    "min_chars": 60
+  },
+  "_생각설명": "어려운 질문일 때만 켜집니다. plan=답하기 전에 무엇을 어떤 도구로 확인할지 먼저 계획(추가 호출 없음). review=답을 내보내기 전에 도구 결과와 대조해 스스로 감수(모델 호출 1회 추가). 쉬운 질문은 그대로 즉답합니다.",
+  "deliberate": {
+    "plan": true,
+    "review": true
+  },
+  "max_steps": 8,
+  "allowed_dirs": [
+    "C:/Users/user",
+    "C:/Users/user/Desktop"
+  ]
+}

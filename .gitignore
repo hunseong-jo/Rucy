@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+keys/*.txt
+keys/*.json
+!keys/.gitkeep
+uploads/
+screenshots/
+*.log

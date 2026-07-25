@@ -1,0 +1,10 @@
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\obj\Debug\check.csproj.AssemblyReference.cache
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\obj\Debug\check.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\obj\Debug\check.AssemblyInfoInputs.cache
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\obj\Debug\check.AssemblyInfo.cs
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\obj\Debug\check.csproj.CoreCompileInputs.cache
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\bin\Debug\LucyCsCheck.deps.json
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\bin\Debug\LucyCsCheck.dll
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\bin\Debug\LucyCsCheck.pdb
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\obj\Debug\LucyCsCheck.dll
+C:\Users\user\my-agent\memory\unity_cscheck\dietcreature\obj\Debug\LucyCsCheck.pdb

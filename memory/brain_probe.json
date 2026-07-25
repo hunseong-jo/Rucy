@@ -1,0 +1,15 @@
+{
+ "at": "2026-07-23T23:13:08",
+ "brains": {
+  "OpenRouter 무료 라우터": {
+   "state": "alive",
+   "detail": "Sure thing! What would you like to talk about or work on tod",
+   "at": "2026-07-23"
+  },
+  "Groq qwen3-32b": {
+   "state": "dead",
+   "detail": "HTTP 404 The model `qwen/qwen3-32b` does not exist or you do not have access to it.",
+   "at": "2026-07-23"
+  }
+ }
+}

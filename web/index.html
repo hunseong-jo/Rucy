@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{NAME}}</title>
+<style>
+  :root {
+    --bg: #faf7f2; --panel: #fff; --line: #e8e0d5; --ink: #33302c; --dim: #8d857a;
+    --me: #e8f0e4; --lucy: #fff; --accent: #6f8f5f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1b19; --panel: #24231f; --line: #35332e; --ink: #ece7dd; --dim: #9b9387;
+      --me: #2f3a2a; --lucy: #24231f; --accent: #93b47f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink); display: flex; flex-direction: column;
+    font: 16px/1.6 -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+  }
+  header {
+    padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel);
+    display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 2;
+  }
+  header b { font-size: 17px; }
+  header .sp { flex: 1; }
+  .toggle {
+    border: 1px solid var(--line); background: transparent; color: var(--dim);
+    border-radius: 999px; padding: 6px 12px; font-size: 14px; cursor: pointer;
+  }
+  .toggle.on { color: var(--accent); border-color: var(--accent); }
+
+  #log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; }
+  .row.me { justify-content: flex-end; }
+  .bubble {
+    max-width: min(680px, 86%); padding: 10px 14px; border-radius: 16px;
+    border: 1px solid var(--line); white-space: pre-wrap; word-break: break-word;
+  }
+  .me .bubble { background: var(--me); border-bottom-right-radius: 4px; }
+  .lucy .bubble { background: var(--lucy); border-bottom-left-radius: 4px; }
+  .bubble img { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
+  .meta { font-size: 12px; color: var(--dim); margin-top: 6px; }
+
+  /* 루시 답의 마크다운 — 표·코드·목록이 폰에서 제대로 보이게 */
+  .bubble .md { white-space: normal; }
+  .md .gap { height: 8px; }
+  .md .h { font-weight: 700; margin: 6px 0 2px; }
+  .md .h1 { font-size: 18px; } .md .h2 { font-size: 17px; }
+  .md ul, .md ol { margin: 4px 0; padding-left: 22px; }
+  .md li { margin: 2px 0; }
+  .md pre {
+    background: rgba(127,127,127,.09); border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 10px; overflow-x: auto; margin: 6px 0;
+    font: 13px/1.5 ui-monospace, Consolas, monospace; white-space: pre;
+  }
+  .md code { background: rgba(127,127,127,.14); border-radius: 4px; padding: 1px 4px;
+             font-family: ui-monospace, Consolas, monospace; font-size: 90%; }
+  .md pre code { background: none; padding: 0; font-size: 13px; }
+  .md .tbl { overflow-x: auto; margin: 6px 0; }
+  .md table { border-collapse: collapse; }
+  .md th, .md td { border: 1px solid var(--line); padding: 4px 8px; font-size: 14px; }
+  .md th { background: rgba(127,127,127,.08); }
+  .md a { color: var(--accent); }
+  .notes { font-size: 12px; color: var(--dim); font-family: ui-monospace, Consolas, monospace; }
+  .err { color: #c0554d; }
+  .filelink {
+    display: block; margin-top: 8px; padding: 8px 12px; border: 1px solid var(--line);
+    border-radius: 10px; color: var(--accent); text-decoration: none; word-break: break-all;
+  }
+
+  /* 지난 대화 보기 — 대화 위에 얹히는 판 */
+  #histPane {
+    position: fixed; inset: 0; background: var(--bg); z-index: 5;
+    display: none; flex-direction: column;
+  }
+  #histPane.open { display: flex; }
+  #histHead {
+    padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel);
+    display: flex; align-items: center; gap: 10px;
+  }
+  #histDays { flex: 1; font: inherit; padding: 6px 10px; border-radius: 10px;
+              border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  #histLog { flex: 1; overflow-y: auto; padding: 16px; display: flex;
+             flex-direction: column; gap: 12px; }
+
+  form {
+    display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line);
+    background: var(--panel); padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+  textarea {
+    flex: 1; resize: none; border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 12px; font: inherit; background: var(--bg); color: var(--ink);
+    max-height: 140px;
+  }
+  button.send, label.pick, button.pick {
+    border: none; border-radius: 12px; padding: 0 16px; font: inherit; cursor: pointer;
+    background: var(--accent); color: #fff; display: grid; place-items: center;
+  }
+  label.pick, button.pick { background: transparent; color: var(--dim); border: 1px solid var(--line); }
+  button.pick.on { color: #c0554d; border-color: #c0554d; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 50% { opacity: .5; } }
+  button:disabled { opacity: .5; }
+  #file { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <b>{{NAME}}</b>
+  <span class="sp"></span>
+  <button class="toggle" id="hist" title="PC에서 나눈 대화를 이어봅니다">📜 지난 대화</button>
+  <button class="toggle" id="speak" title="답을 이 기기에서 소리로 읽어줍니다">🔊 읽어주기</button>
+</header>
+
+<div id="log"></div>
+
+<div id="histPane">
+  <div id="histHead">
+    <select id="histDays"></select>
+    <button class="toggle" id="histClose">닫기 ✕</button>
+  </div>
+  <div id="histLog"></div>
+</div>
+
+<form id="form">
+  <label class="pick" for="file" title="사진·녹음·문서 올리기">📷</label>
+  <input type="file" id="file" accept="image/*,audio/*,video/*,.m4a,.pdf,.docx,.xlsx,.pptx,.hwpx,.txt,.md,.csv">
+  <button type="button" class="pick" id="mic" title="누르고 말하기, 다시 누르면 보내기">🎤</button>
+  <textarea id="text" rows="1" placeholder="루시에게 말하기…" autocomplete="off"></textarea>
+  <button class="send" id="send">보내기</button>
+</form>
+
+<script>
+const log = document.getElementById('log');
+const form = document.getElementById('form');
+const text = document.getElementById('text');
+const send = document.getElementById('send');
+const file = document.getElementById('file');
+const speakBtn = document.getElementById('speak');
+
+let speakOn = localStorage.getItem('speak') === '1';
+paintSpeak();
+speakBtn.onclick = () => { speakOn = !speakOn; localStorage.setItem('speak', speakOn ? '1' : '0'); paintSpeak(); };
+function paintSpeak() { speakBtn.classList.toggle('on', speakOn); }
+
+let audio = null;
+
+function bubble(who, cls) {
+  const row = document.createElement('div');
+  row.className = 'row ' + who;
+  const b = document.createElement('div');
+  b.className = 'bubble ' + (cls || '');
+  row.appendChild(b);
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+  return b;
+}
+
+// ── 미니 마크다운 렌더러 — 루시 답의 표·코드·목록·굵게를 제대로 보여줍니다.
+// ⚠️반드시 escapeHtml을 먼저 — 루시가 인용한 HTML/스크립트가 화면에서 실행되면 안 됩니다.
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function inlineMd(s) {            // 이미 escape된 글에 인라인 꾸밈만 얹습니다
+  return s
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')
+    .replace(/(https?:\/\/[^\s<)”“"']+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+function mdToHtml(text) {
+  const lines = (text || '').split('\n');
+  const out = [];
+  let i = 0;
+  const isRow = l => /^\s*\|.*\|\s*$/.test(l);
+  const isItem = l => /^\s*([-*•]|\d+[.)])\s+/.test(l);
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^\s*```/.test(line)) {                  // 코드 블록
+      const buf = [];
+      i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) { buf.push(lines[i]); i++; }
+      i++;
+      out.push('<pre><code>' + escapeHtml(buf.join('\n')) + '</code></pre>');
+      continue;
+    }
+    if (isRow(line)) {                           // 표
+      let html = '<div class="tbl"><table>';
+      let head = true;
+      while (i < lines.length && isRow(lines[i])) {
+        const r = lines[i].trim();
+        i++;
+        if (/^[|\s:\-]+$/.test(r)) continue;     // |---|---| 구분줄
+        const tag = head ? 'th' : 'td';
+        head = false;
+        const cells = r.replace(/^\||\|$/g, '').split('|')
+          .map(c => inlineMd(escapeHtml(c.trim())));
+        html += '<tr>' + cells.map(c => '<' + tag + '>' + c + '</' + tag + '>').join('') + '</tr>';
+      }
+      out.push(html + '</table></div>');
+      continue;
+    }
+    if (isItem(line)) {                          // 목록
+      const ordered = /^\s*\d+[.)]\s/.test(line);
+      const items = [];
+      while (i < lines.length && isItem(lines[i])) {
+        items.push('<li>' + inlineMd(escapeHtml(lines[i].replace(/^\s*([-*•]|\d+[.)])\s+/, ''))) + '</li>');
+        i++;
+      }
+      out.push((ordered ? '<ol>' : '<ul>') + items.join('') + (ordered ? '</ol>' : '</ul>'));
+      continue;
+    }
+    const h = /^(#{1,4})\s+(.*)$/.exec(line);
+    if (h) {
+      out.push('<div class="h h' + h[1].length + '">' + inlineMd(escapeHtml(h[2])) + '</div>');
+      i++;
+      continue;
+    }
+    if (line.trim() === '') { out.push('<div class="gap"></div>'); i++; continue; }
+    out.push('<div>' + inlineMd(escapeHtml(line)) + '</div>');
+    i++;
+  }
+  return out.join('');
+}
+
+function render(b, data) {                        // 답 말풍선 채우기 — 글 대화와 음성 대화가 같이 씁니다
+  b.innerHTML = '';
+  const md = document.createElement('div');
+  md.className = 'md';
+  md.innerHTML = mdToHtml(data.answer);
+  b.appendChild(md);
+
+  (data.images || []).forEach(src => {            // 루시가 그린 그림을 대화에 바로 띄웁니다
+    const img = document.createElement('img');
+    img.src = src;
+    b.appendChild(img);
+  });
+
+  (data.files || []).forEach(f => {               // 답에 적힌 문서는 내려받기 링크로
+    const a = document.createElement('a');
+    a.className = 'filelink';
+    a.href = f.url;
+    a.textContent = '📄 ' + f.name + ' — 내려받기';
+    b.appendChild(a);
+  });
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.textContent = data.used || '';
+  b.appendChild(meta);
+}
+
+function speakAnswer(answer) {                    // 이 기기(폰)의 스피커로 읽습니다
+  if (audio) audio.pause();
+  audio = new Audio('/say?text=' + encodeURIComponent(answer.slice(0, 900)));
+  audio.play().catch(() => {});
+}
+
+async function poll(id) {         // 배경으로 넘어간 긴 턴 — 끝날 때까지 몇 초마다 찾아갑니다
+  for (let i = 0; i < 240; i++) {                   // 최대 20분
+    await new Promise(r => setTimeout(r, 5000));
+    let d;
+    try { d = await (await fetch('/poll?id=' + id)).json(); } catch (e) { continue; }
+    if (d && d.pending) continue;
+    return d || { error: '결과를 받지 못했습니다.' };
+  }
+  return { error: '20분이 지나도 끝나지 않았습니다 — PC 화면(/상태)을 확인해 주세요.' };
+}
+
+async function ask(question) {
+  bubble('me').textContent = question;
+  const b = bubble('lucy');
+  b.innerHTML = '<span class="notes">생각하는 중…</span>';
+  send.disabled = true;
+
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: question })
+    });
+    let data = await res.json();
+
+    if (data.pending) {           // 시간이 걸리는 일 — 화면은 살려두고 결과만 기다립니다
+      b.innerHTML = '<span class="notes">⏳ 시간이 걸리는 일을 하는 중… (끝나면 여기 답이 달립니다. 다른 질문을 먼저 해도 됩니다)</span>';
+      send.disabled = false;
+      data = await poll(data.pending);
+    }
+
+    if (data.error) {
+      b.innerHTML = '';
+      b.classList.add('err');
+      b.textContent = data.error;
+      return;
+    }
+
+    render(b, data);
+    if (speakOn && data.answer) speakAnswer(data.answer);
+  } catch (e) {
+    b.classList.add('err');
+    b.textContent = '연결이 끊겼습니다. 컴퓨터에서 루시 웹이 켜져 있는지 확인해 주세요.';
+  } finally {
+    send.disabled = false;
+    log.scrollTop = log.scrollHeight;
+  }
+}
+
+// ── 음성 대화 — 🎤 누르고 말하고 다시 누르면, 받아쓴 질문과 답이 말풍선으로 옵니다.
+// 브라우저는 https(또는 localhost)에서만 마이크를 열어줍니다 — http로 접속했다면 안내만 합니다.
+const micBtn = document.getElementById('mic');
+let rec = null;
+
+micBtn.onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+    alert('이 주소에서는 브라우저가 마이크를 막습니다(https 필요).\n' +
+          'Tailscale의 https 주소로 접속하거나, 📷 버튼으로 녹음 파일을 올려 주세요.');
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    rec = new MediaRecorder(stream);
+    const chunks = [];
+    rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    rec.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());          // 마이크 불(표시등)을 끕니다
+      micBtn.textContent = '🎤';
+      micBtn.classList.remove('on');
+      talk(new Blob(chunks, { type: rec.mimeType || 'audio/webm' }), rec.mimeType || '');
+    };
+    rec.start();
+    micBtn.textContent = '⏹';
+    micBtn.classList.add('on');
+  } catch (e) {
+    alert('마이크를 열지 못했습니다: ' + e.message);
+  }
+};
+
+async function talk(blob, mime) {
+  if (blob.size < 1000) return;                   // 눌렀다 바로 뗀 헛손질
+  // 서버(Groq)는 형식을 파일명 확장자로 알아봅니다 — 브라우저마다 녹음 형식이 다릅니다(아이폰=mp4)
+  const ext = mime.includes('mp4') ? '.mp4' : mime.includes('ogg') ? '.ogg' : '.webm';
+  const me = bubble('me');
+  me.innerHTML = '<span class="notes">알아듣는 중…</span>';
+  const b = bubble('lucy');
+  b.innerHTML = '<span class="notes">생각하는 중…</span>';
+  send.disabled = true;
+
+  try {
+    const res = await fetch('/talk', {
+      method: 'POST',
+      headers: { 'X-Filename': 'talk' + ext },
+      body: blob
+    });
+    let data = await res.json();
+
+    if (data.pending) {           // 긴 턴 — 받아쓴 말은 먼저 보여주고 답만 기다립니다
+      me.textContent = '🎤 ' + (data.heard || '(음성)');
+      b.innerHTML = '<span class="notes">⏳ 시간이 걸리는 일을 하는 중… (끝나면 여기 답이 달립니다)</span>';
+      send.disabled = false;
+      data = await poll(data.pending);
+    }
+
+    if (data.error) {
+      me.textContent = '🎤 (음성)';
+      b.classList.add('err');
+      b.textContent = data.error;
+      return;
+    }
+
+    me.textContent = '🎤 ' + data.heard;          // 내 말이 이렇게 들렸구나 — 오인식을 바로 알 수 있게
+    render(b, data);
+    if (data.answer) speakAnswer(data.answer);    // 말로 물었으니 답도 소리로(읽어주기 버튼과 무관)
+  } catch (e) {
+    b.classList.add('err');
+    b.textContent = '연결이 끊겼습니다. 컴퓨터에서 루시 웹이 켜져 있는지 확인해 주세요.';
+  } finally {
+    send.disabled = false;
+    log.scrollTop = log.scrollHeight;
+  }
+}
+
+form.onsubmit = e => {
+  e.preventDefault();
+  const q = text.value.trim();
+  if (!q) return;
+  text.value = '';
+  text.style.height = 'auto';
+  ask(q);
+};
+
+// 폰 사진·녹음·문서는 PC에 올려야 루시가 볼 수 있습니다(루시는 PC 파일만 봅니다).
+file.onchange = async () => {
+  const f = file.files[0];
+  if (!f) return;
+  const b = bubble('me');
+  b.innerHTML = '<span class="notes">올리는 중…</span>';
+  const res = await fetch('/upload', {
+    method: 'POST',
+    headers: { 'X-Filename': encodeURIComponent(f.name) },
+    body: f
+  });
+  const data = await res.json();
+  file.value = '';
+  b.innerHTML = '';
+  if (f.type.startsWith('image')) {
+    const img = document.createElement('img');
+    img.src = data.url;
+    b.appendChild(img);
+  } else if (f.type.startsWith('audio') || /\.(m4a|mp3|wav|ogg)$/i.test(f.name)) {
+    b.textContent = '🎵 ' + f.name + ' 올렸습니다';  // "받아써줘"라고 하면 됩니다
+  } else if (f.type.startsWith('video') || /\.(mp4|mov|webm|mkv|avi)$/i.test(f.name)) {
+    b.textContent = '🎬 ' + f.name + ' 올렸습니다';  // "잘라줘/소리 뽑아줘/받아써줘"라고 하면 됩니다
+  } else {
+    b.textContent = '📄 ' + f.name + ' 올렸습니다';  // "요약해줘/읽어봐줘"라고 하면 됩니다
+  }
+  text.value = data.path + ' ';
+  text.focus();                                   // 이제 "이거 뭐야?"/"받아써줘"/"요약해줘"라고 물으면 됩니다
+};
+
+// ── 지난 대화 보기 — PC의 대화 기록을 읽어와 같은 말풍선 모양으로 보여줍니다(읽기만).
+const histPane = document.getElementById('histPane');
+const histDays = document.getElementById('histDays');
+const histLog = document.getElementById('histLog');
+
+document.getElementById('hist').onclick = async () => {
+  histPane.classList.add('open');
+  const res = await fetch('/history');
+  const data = await res.json();
+  histDays.innerHTML = '';
+  (data.days || []).forEach(d => {
+    const o = document.createElement('option');
+    o.value = d;
+    o.textContent = d;
+    histDays.appendChild(o);
+  });
+  if (data.days && data.days.length) loadDay(data.days[0]);
+  else histLog.innerHTML = '<span class="notes">대화 기록이 없습니다.</span>';
+};
+document.getElementById('histClose').onclick = () => histPane.classList.remove('open');
+histDays.onchange = () => loadDay(histDays.value);
+
+async function loadDay(day) {
+  histLog.innerHTML = '<span class="notes">읽는 중…</span>';
+  const res = await fetch('/history?d=' + encodeURIComponent(day));
+  const data = await res.json();
+  histLog.innerHTML = '';
+  (data.messages || []).forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'row ' + m.who;
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    if (m.who === 'lucy') {                      // 루시 답은 지난 대화에서도 마크다운으로
+      const md = document.createElement('div');
+      md.className = 'md';
+      md.innerHTML = mdToHtml(m.text);
+      b.appendChild(md);
+    } else {
+      b.textContent = m.text;
+    }
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.textContent = m.time;
+    b.appendChild(meta);
+    row.appendChild(b);
+    histLog.appendChild(row);
+  });
+  if (!histLog.childNodes.length)
+    histLog.innerHTML = '<span class="notes">이날은 기록이 없습니다.</span>';
+  histLog.scrollTop = histLog.scrollHeight;
+}
+
+text.addEventListener('input', () => {
+  text.style.height = 'auto';
+  text.style.height = Math.min(text.scrollHeight, 140) + 'px';
+});
+text.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && !window.matchMedia('(pointer: coarse)').matches) {
+    e.preventDefault();
+    form.requestSubmit();
+  }
+});
+</script>
+</body>
+</html>

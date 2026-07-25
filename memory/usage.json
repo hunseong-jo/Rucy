@@ -1,0 +1,129 @@
+{
+  "2026-07-13": {
+    "Cerebras zai-glm-4.7": 4,
+    "Gemini 3 Flash": 3,
+    "Groq qwen3.6-27b": 2,
+    "Groq qwen3-32b": 1
+  },
+  "2026-07-14": {
+    "Cerebras zai-glm-4.7": 16,
+    "Gemini 3 Flash": 27,
+    "OpenRouter 무료 라우터": 16
+  },
+  "2026-07-15": {
+    "Groq qwen3-32b": 1,
+    "NVIDIA deepseek-v4-flash": 2,
+    "NVIDIA gpt-oss-120b": 17,
+    "NVIDIA mistral-medium-3.5-128b": 2,
+    "NVIDIA nemotron-3-super-120b-a12b": 2,
+    "NVIDIA nemotron-3-super": 3,
+    "NVIDIA mistral-medium-3.5": 2,
+    "Gemini 3 Flash": 12,
+    "Cerebras zai-glm-4.7": 24
+  },
+  "2026-07-16": {
+    "Cerebras zai-glm-4.7": 21,
+    "NVIDIA gpt-oss-120b": 6,
+    "Gemini 3 Flash": 10
+  },
+  "2026-07-17": {
+    "Cerebras zai-glm-4.7": 8,
+    "NVIDIA gpt-oss-120b": 4,
+    "Gemini 3 Flash": 1
+  },
+  "2026-07-18": {
+    "Cerebras zai-glm-4.7": 7,
+    "Gemini 3 Flash": 39,
+    "Groq qwen3.6-27b": 16,
+    "시험 nvidia/nemotron-nano-12b-v2-vl": 1,
+    "시험 meta/llama-3.2-11b-vision-instruct": 1,
+    "NVIDIA nemotron-nano-VL": 20
+  },
+  "2026-07-19": {
+    "Groq qwen3.6-27b": 13,
+    "Gemini 3 Flash": 4,
+    "NVIDIA nemotron-nano-VL": 18,
+    "NVIDIA nemotron-3-super": 5,
+    "시험 qwen3.5-397b": 6,
+    "시험 glm-5.2": 5,
+    "시험 deepseek-v4-pro": 7,
+    "시험 qwen3-next-80b": 6,
+    "NVIDIA glm-5.2": 1,
+    "Cerebras zai-glm-4.7": 3
+  },
+  "2026-07-20": {
+    "Cerebras zai-glm-4.7": 9,
+    "NVIDIA gpt-oss-120b": 8,
+    "NVIDIA nemotron-3-super": 17,
+    "Groq qwen3.6-27b": 10,
+    "NVIDIA nemotron-nano-VL": 12,
+    "Gemini 3 Flash": 4
+  },
+  "2026-07-21": {
+    "Cerebras zai-glm-4.7": 9,
+    "Groq qwen3.6-27b": 4,
+    "Gemini 3 Flash": 6,
+    "NVIDIA nemotron-nano-VL": 5,
+    "NVIDIA nemotron-3-super": 15,
+    "NVIDIA gpt-oss-120b": 3
+  },
+  "2026-07-22": {
+    "Cerebras zai-glm-4.7": 3,
+    "NVIDIA gpt-oss-120b": 23,
+    "Gemini 3 Flash": 7,
+    "NVIDIA nemotron-nano-VL": 6,
+    "NVIDIA glm-5.2": 1,
+    "NVIDIA mistral-medium-3.5": 1,
+    "NVIDIA nemotron-3-super": 1
+  },
+  "2026-07-23": {
+    "Cerebras zai-glm-4.7": 13,
+    "NVIDIA gpt-oss-120b": 4,
+    "NVIDIA nemotron-3-super": 3,
+    "NVIDIA glm-5.2": 2,
+    "Gemini 3 Flash": 13,
+    "OpenRouter 무료 라우터": 3,
+    "Groq qwen3.6-27b": 6,
+    "NVIDIA nemotron-nano-VL": 14,
+    "NVIDIA mistral-medium-3.5": 5,
+    "점검 OpenRouter 무료 라우터": 4,
+    "점검 llama33": 3,
+    "점검 gpt-oss-120b": 4,
+    "점검 gpt-oss-20b": 4,
+    "시험 NIM nemotron-nano-vl-8b": 2,
+    "시험 NIM gemma-4-31b": 6,
+    "시험 Gemini 3.5 Flash": 4,
+    "시험 Gemini 3.1 Flash Lite": 7,
+    "시험2 NIM nemotron-3-nano-omni": 2,
+    "시험2 OR 무료 라우터(이미지)": 2,
+    "시험2 OR nemotron-omni free": 2,
+    "시험 NIM nemotron-3-nano-omni": 5,
+    "시험 OR nemotron-omni": 5,
+    "시험t NIM gemma-4-31b": 1,
+    "시험t Gemini 3.1 Flash Lite": 1
+  },
+  "2026-07-24": {
+    "시험 NIM nemotron-3-nano-omni": 3,
+    "시험t omni": 1,
+    "Gemini 3 Flash": 2,
+    "NIM gemma-4-31b": 2,
+    "Gemini 3.1 Flash Lite": 2
+  },
+  "2026-07-25": {
+    "Cerebras zai-glm-4.7": 31,
+    "NVIDIA gpt-oss-120b": 42,
+    "NVIDIA nemotron-3-super": 5,
+    "NVIDIA mistral-medium-3.5": 1,
+    "Gemini 3 Flash": 4,
+    "NIM gemma-4-31b": 2,
+    "Gemini 3.1 Flash Lite": 2
+  },
+  "2026-07-26": {
+    "Cerebras zai-glm-4.7": 24,
+    "NVIDIA gpt-oss-120b": 15,
+    "NVIDIA nemotron-3-super": 2,
+    "Groq gpt-oss-120b": 1,
+    "Groq qwen3.6-27b": 1,
+    "NVIDIA mistral-medium-3.5": 1
+  }
+}
