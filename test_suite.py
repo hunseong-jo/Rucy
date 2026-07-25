@@ -358,7 +358,7 @@ class TestDrawRouting(unittest.TestCase):
     def test_draw_hint_text(self):
         """agent.DRAW_HINT 지침 탑재 검증"""
         self.assertIn("draw 도구", agent.DRAW_HINT)
-        self.assertIn("부정하거나 거절하지 말고", agent.DRAW_HINT)
+        self.assertIn("거짓 거절 텍스트를 출력하지 마라", agent.DRAW_HINT)
 
 
 class TestBlenderSpecs(unittest.TestCase):
