@@ -767,7 +767,7 @@ def _safe_args(raw):
     return "{}"      # 못 고치면 빈 인자 — 그 도구 호출은 실패해도 **대화와 폴백은 살아야 합니다**
 
 
-def run_turn(config, messages, order=None, use_tools=True, deep_think=False):
+def run_turn(config, messages, order=None, use_tools=True, force_tool=False, deep_think=False):
     """모델이 '도구 그만 쓰고 답하겠다'고 할 때까지 돌립니다.
     deep_think=True면 추론 모드를 켤 수 있는 두뇌에 얹습니다(어려운 질문에서만)."""
     last_user = next((session.text_of(m) for m in reversed(messages) if m.get("role") == "user"), "")
@@ -775,7 +775,8 @@ def run_turn(config, messages, order=None, use_tools=True, deep_think=False):
 
     for step in range(config.get("max_steps", 8)):
         message, used, entry = call_model(config, messages, order=order,
-                                          use_tools=use_tools, deep_think=deep_think)
+                                          use_tools=use_tools, force_tool=force_tool if step == 0 else False,
+                                          deep_think=deep_think)
 
         # 사실 질문인데 도구를 안 쓰고 첫 턴에 바로 답하려 하면 도구 사용을 강제해 다시 부릅니다.
         if (
