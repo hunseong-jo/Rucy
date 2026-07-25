@@ -1,14 +1,16 @@
 @echo off
 chcp 65001 >nul
-title Lucy AI - PC Git Sync (Option A)
+title Rucy AI - PC Git Sync (Option A)
+
+:: Repository: https://github.com/hunseong-jo/Rucy.git
 
 echo ========================================================
-echo       Lucy AI PC Git Sync Script (Option A)
+echo       Rucy AI PC Git Sync Script (Option A)
 echo ========================================================
 echo.
 
-:: Move to project root directory (one level up from scripts)
-cd /d "%~dp0.."
+:: Move to project root directory
+cd /d "C:\Users\user\my-agent"
 
 echo [1/4] Checking Git repository status in %CD%...
 git status -s

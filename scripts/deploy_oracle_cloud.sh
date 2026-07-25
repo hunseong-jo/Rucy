@@ -20,8 +20,8 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-INSTALL_DIR="/opt/my-agent"
-REPO_URL="https://github.com/user/my-agent.git"
+INSTALL_DIR="/opt/Rucy"
+REPO_URL="https://github.com/hunseong-jo/Rucy.git"
 
 echo -e "\n${YELLOW}[1/6] 시스템 패키지 업데이트 및 필요 도구 설치 중...${NC}"
 apt-get update -y

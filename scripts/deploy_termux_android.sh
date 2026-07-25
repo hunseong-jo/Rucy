@@ -39,8 +39,8 @@ pkg install -y \
     optipng || true
 
 # 3. Project Directory Setup
-TARGET_DIR="${HOME}/my-agent"
-echo -e "\n${YELLOW}[3/6] Lucy 프로젝트 디렉터리 준비 (${TARGET_DIR})...${NC}"
+TARGET_DIR="${HOME}/Rucy"
+echo -e "\n${YELLOW}[3/6] Rucy 프로젝트 디렉터리 준비 (${TARGET_DIR})...${NC}"
 
 if [ "$(pwd)" != "${TARGET_DIR}" ]; then
     mkdir -p "${TARGET_DIR}"
@@ -53,7 +53,7 @@ if [ "$(pwd)" != "${TARGET_DIR}" ]; then
             if [ -d "${TARGET_DIR}/.git" ]; then
                 cd "${TARGET_DIR}" && git pull || true
             else
-                git clone https://github.com/user/my-agent.git "${TARGET_DIR}" || true
+                git clone https://github.com/hunseong-jo/Rucy.git "${TARGET_DIR}" || true
             fi
         fi
     fi

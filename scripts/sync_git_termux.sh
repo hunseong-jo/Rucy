@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Lucy AI Agent Termux Android Git Sync Script (Option A)
+# Rucy AI Agent Termux Android Git Sync Script (Option A)
+# Repository: https://github.com/hunseong-jo/Rucy.git
 # ==============================================================================
 set -euo pipefail
 
@@ -11,11 +12,11 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 echo -e "${CYAN}======================================================"
-echo -e "     Lucy AI Termux Android Git Sync (Option A)      "
+echo -e "     Rucy AI Termux Android Git Sync (Option A)      "
 echo -e "======================================================${NC}"
 
 # Navigate to project directory
-TARGET_DIR="${HOME}/my-agent"
+TARGET_DIR="${HOME}/Rucy"
 if [ -d "${TARGET_DIR}" ]; then
     cd "${TARGET_DIR}"
 elif [ -d "$(dirname "$0")/.." ]; then
