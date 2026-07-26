@@ -4,7 +4,7 @@
 - [나만의 AI 비서 루시](project_my_agent.md) — C:\Users\user\my-agent, start.bat. 두뇌 11단·도구 77종·doctor 11종·블렌더 51동작. ⭐분업: 시각/조형/설계=클로드, 기계적/수치/반복=루시. ⭐manual_루시_사용설명서.md가 유일 원본 — 새 기능 시 반드시 갱신. 🔎s75 점검 미결(승인 필요): **자동 후순위가 실제 대화엔 안 걸림**(pick_order가 늘 order를 넘겨 rank 우회 — /상태가 사실과 다른 말을 함)·**눈 3개 중 쓸 만한 건 Gemini뿐**. 함정·도구목록·세션이력 전부 파일에.
 - [루시 기능 백로그](todo_lucy_feature_backlog.md) — 파일 맨 위 '다음에 할 것' 절이 최신. 다음 후보=실전 한 바퀴·웨이크워드·지하철 키. ⛔폰 원격 개발 중단.
 - [루시 사고력 강화 4중 장치](project_lucy_thinking_s70.md) — 추론 모드·deep 확대·독립감수·분해 지시. config deliberate로 전부 끔.
-- [강의 PDF RAG 학습](feature_lecture_rag.md) · [게임 기획 학습](feature_lucy_gamedesign.md) · [✅기능 5종 완료](todo_lucy_next_features.md) · [✅구글 연동 완료](todo_google_oauth_setup.md) · [Oracle Cloud VPS 24/7 배포 매뉴얼](manual_oracle_cloud_deploy.md)
+- [강의 PDF RAG 학습](feature_lecture_rag.md) · [게임 기획 학습](feature_lucy_gamedesign.md) · [✅기능 5종 완료](todo_lucy_next_features.md) · [✅구글 연동 완료](todo_google_oauth_setup.md)
 
 ## 피드백 · 원칙
 - [⚠️루시는 형태를 설계 못 한다](feedback_lucy_cannot_design_form.md) — 도구 늘리기 전에 형태 설계 문제인지 갈라라. 자기 진단도 못 믿음.
