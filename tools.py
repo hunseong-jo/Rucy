@@ -2219,23 +2219,24 @@ def list_events(args):
     """구글 캘린더의 앞으로의 일정을 봅니다."""
     import gmail_calendar as gc
     if _google_off():
-        return "캘린더 연동이 꺼져 있습니다 (config의 google.enabled)."
+        return "캘린더 연동이 꺼져 있습니다 (config의 google.enabled). 장기 메모(notes.md)나 대화록(search_memory / read_notes)을 확인하십시오."
     if not gc.ready():
-        return gc.SETUP_GUIDE
+        return gc.SETUP_GUIDE + "\n(구글 캘린더 미연동 상태입니다. 장기 메모(notes.md)나 대화록(search_memory / read_notes)에서 일정을 확인하십시오.)"
 
     days = int(args.get("days", 7))
     try:
         found = gc.events(days=days)
     except Exception as e:
-        return f"일정을 읽지 못했습니다: {type(e).__name__}: {e}"
+        return f"일정을 읽지 못했습니다: 캘린더 연동 에러/토큰 만료 (메모 확인 필요): {e}"
 
     if not found:
-        return f"앞으로 {days}일간 등록된 일정이 없습니다."
+        return f"앞으로 {days}일간 구글 캘린더에 등록된 일정이 없습니다. (장기 메모 notes.md 나 대화록 search_memory / read_notes 도 함께 확인하십시오.)"
 
-    lines = [f"앞으로 {days}일간 일정 {len(found)}건:"]
+    lines = [f"앞으로 {days}일간 구글 캘린더 일정 {len(found)}건:"]
     for e in found:
         when = e["when"][:10] if e["allday"] else e["when"][:16].replace("T", " ")
         lines.append(f"  · {when}  {e['title']}" + (f"  @{e['where']}" if e["where"] else ""))
+    lines.append("\n(참고: 구글 캘린더 외에 장기 메모나 대화록 search_memory / read_notes 도 다중 검증하세요.)")
     return "\n".join(lines)
 
 

@@ -544,6 +544,7 @@ def local_only(config):
     config["persona"] = (
         f"너는 한국어 개인 비서 '{agent_name(config)}'다. 짧고 정확하게 존댓말로 답한다.\n"
         "날짜·파일·검색이 필요하면 추측하지 말고 반드시 도구를 쓴다. 모르면 모른다고 말한다.\n"
+        "일정·약속·수요일 할 일 등 일정 질문 시 캘린더/알림뿐 아니라 장기 메모(notes.md)와 대화록(search_memory/read_notes)을 반드시 함께 조회하여 다중 검증한다.\n"
         "너는 그림·이미지 생성 능력(draw 도구)을 가지고 있으므로 그림 요청이 오면 거절하지 말고 반드시 draw 도구를 써라.\n"
         "네 목소리 볼륨은 사용자가 '/읽기 볼륨 0~100'으로 조절한다(예: /읽기 볼륨 50). "
         "'목소리가 크다/작다·볼륨 줄여·키워'라고 하면 윈도우 볼륨이 아니라 이 명령을 먼저 안내하라.\n"
@@ -562,6 +563,10 @@ DRAW_QUESTION = re.compile(
     r"(그려|그림|이미지\s*생성|일러스트|그려서|그려줘|그려봐|그려주라|그림체|화풍|디자인|바탕화면에\s*저장|사진|생성해|만들어줘\s*그림|저장해줘|캐릭터|퍼리|draw|restyle)"
 )
 
+SCHEDULE_QUESTION = re.compile(
+    r"(일정|약속|할\s*일|스케줄|캘린더|알림|수요일|월요일|화요일|목요일|금요일|토요일|일요일|이번\s*주|다음\s*주|몇\s*시|언제)"
+)
+
 REFUSAL_TEXT = re.compile(
     r"(그림을\s*(그리거나|생성|못|그릴)|생성할\s*수\s*없|도구를\s*제공하지|직접\s*그림|파일을\s*생성해|바탕화면에\s*저장할\s*수|이미지를\s*생성|그림\s*생성\s*능력|그림을\s*그릴\s*수|할\s*수\s*없습)"
 )
@@ -571,6 +576,9 @@ REFUSAL_TEXT = re.compile(
 PLAN_HINT = (
     "이 질문은 한 번에 답하지 마라. 먼저 답에 필요한 사실이 무엇인지 정하고, "
     "그것을 어떤 도구로 확인할지 한 줄로 계획한 뒤 그대로 실행하라.\n"
+    "일정, 약속, 수요일 할 일 등 일정 관련 질문이 들어왔을 때는 캘린더/알림 도구(list_events, list_reminders)뿐만 아니라 "
+    "장기 메모(notes.md, read_notes) 및 대화 검색(search_memory)을 반드시 함께 조회하여 다중 검증 후 답변하라. "
+    "구글 캘린더나 알림 결과가 비어있거나 연동 에러가 나더라도 메모/대화록을 반드시 확인하여 놓친 일정이 없는지 검증하라.\n"
     "숫자 계산은 암산하지 말고 calc 또는 run_python을 쓴다. "
     "정확도가 중요한 조사는 web_search 대신 research를 쓴다. "
     "날씨·기온·비 예보는 web_search가 아니라 get_weather를 쓴다. "
@@ -588,6 +596,13 @@ PLAN_HINT = (
     "3D 모델이 유니티에 잘 들어갈지 진단은 blender_3d의 check, 유니티 프로젝트의 깨진 참조·큰 텍스처 감사는 unity_audit를 쓴다. "
     "그림·일러스트·캐릭터·이미지 그리기/생성 요청은 거절하지 말고 draw 도구를 쓴다. "
     "확인하지 못한 것은 추측하지 말고 모른다고 말한다."
+)
+
+SCHEDULE_HINT = (
+    "⚠️[일정 및 약속 관련 다중 검증 지침]\n"
+    "일정, 약속, 요일별 할 일 등 일정 관련 질문이 들어왔을 때, 캘린더/알림 도구(list_events, list_reminders)뿐만 아니라 "
+    "장기 메모(notes.md, read_notes) 및 대화 검색(search_memory)을 반드시 함께 조회하여 다중 검증 후 답변하라.\n"
+    "구글 캘린더나 알림 결과가 비어있거나 연동 에러/토큰 만료가 발생하더라도 메모 및 대화록(search_memory, read_notes)을 반드시 확인하여 놓친 일정이 없는지 검증하라."
 )
 
 # 여러 갈래를 한꺼번에 묻는 큰 질문에만 덧붙입니다(is_very_hard). 통째로 답하다 한 갈래를
@@ -949,6 +964,9 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
             added.append({"role": "system", "content": DECOMPOSE_HINT})
 
     is_draw = bool(DRAW_QUESTION.search(user))
+    is_schedule = bool(SCHEDULE_QUESTION.search(user))
+    if is_schedule:
+        added.append({"role": "system", "content": SCHEDULE_HINT})
 
     # 참조 그림을 보고 3D로 만들어 달라는 요청이면, '기능 없다'고 부정하지 말고 본 것을 설명하며
     # 만들기를 제안하도록 안내를 심습니다(도구는 이 턴에 꺼져 있으니 실제 조립은 다음 턴). 세션68.

@@ -127,26 +127,29 @@ def _body_text(payload, limit=600):
 
 def mail(query="is:unread", limit=10):
     """메일을 봅니다. query는 지메일 검색 문법 그대로 (is:unread, from:..., newer_than:2d)."""
-    svc = _service("gmail")
-    listing = svc.users().messages().list(
-        userId="me", q=query, maxResults=int(limit)).execute()
-    ids = [m["id"] for m in listing.get("messages", [])]
-    if not ids:
-        return []
+    try:
+        svc = _service("gmail")
+        listing = svc.users().messages().list(
+            userId="me", q=query, maxResults=int(limit)).execute()
+        ids = [m["id"] for m in listing.get("messages", [])]
+        if not ids:
+            return []
 
-    out = []
-    for mid in ids:
-        msg = svc.users().messages().get(
-            userId="me", id=mid, format="full").execute()
-        payload = msg.get("payload", {})
-        out.append({
-            "from": _header(payload, "from"),
-            "subject": _header(payload, "subject") or "(제목 없음)",
-            "date": _header(payload, "date"),
-            "snippet": msg.get("snippet", "") or _body_text(payload, 300),
-            "unread": "UNREAD" in msg.get("labelIds", []),
-        })
-    return out
+        out = []
+        for mid in ids:
+            msg = svc.users().messages().get(
+                userId="me", id=mid, format="full").execute()
+            payload = msg.get("payload", {})
+            out.append({
+                "from": _header(payload, "from"),
+                "subject": _header(payload, "subject") or "(제목 없음)",
+                "date": _header(payload, "date"),
+                "snippet": msg.get("snippet", "") or _body_text(payload, 300),
+                "unread": "UNREAD" in msg.get("labelIds", []),
+            })
+        return out
+    except Exception as e:
+        raise RuntimeError(f"지메일 연동 에러/토큰 만료 (메모 확인 필요): {e}") from e
 
 
 def create_draft(to, subject, body_text):
@@ -180,26 +183,29 @@ def _kst(dt):
 
 def events(days=7, limit=20):
     """앞으로 며칠간의 일정."""
-    svc = _service("calendar")
-    now = datetime.datetime.now().astimezone()
-    end = now + datetime.timedelta(days=int(days))
-    got = svc.events().list(
-        calendarId="primary", timeMin=_kst(now), timeMax=_kst(end),
-        singleEvents=True, orderBy="startTime", maxResults=int(limit),
-    ).execute()
+    try:
+        svc = _service("calendar")
+        now = datetime.datetime.now().astimezone()
+        end = now + datetime.timedelta(days=int(days))
+        got = svc.events().list(
+            calendarId="primary", timeMin=_kst(now), timeMax=_kst(end),
+            singleEvents=True, orderBy="startTime", maxResults=int(limit),
+        ).execute()
 
-    out = []
-    for e in got.get("items", []):
-        start = e.get("start", {})
-        when = start.get("dateTime") or start.get("date", "")
-        out.append({
-            "id": e.get("id", ""),      # 선알림이 '이미 알렸는지'를 기억하는 열쇠
-            "title": e.get("summary", "(제목 없음)"),
-            "when": when,
-            "allday": "date" in start and "dateTime" not in start,
-            "where": e.get("location", ""),
-        })
-    return out
+        out = []
+        for e in got.get("items", []):
+            start = e.get("start", {})
+            when = start.get("dateTime") or start.get("date", "")
+            out.append({
+                "id": e.get("id", ""),      # 선알림이 '이미 알렸는지'를 기억하는 열쇠
+                "title": e.get("summary", "(제목 없음)"),
+                "when": when,
+                "allday": "date" in start and "dateTime" not in start,
+                "where": e.get("location", ""),
+            })
+        return out
+    except Exception as e:
+        raise RuntimeError(f"캘린더 연동 에러/토큰 만료 (메모 확인 필요): {e}") from e
 
 
 def add_event(title, start, end=None, description="", attendees=None):

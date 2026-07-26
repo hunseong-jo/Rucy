@@ -120,8 +120,8 @@
   },
   "2026-07-26": {
     "Cerebras zai-glm-4.7": 45,
-    "NVIDIA gpt-oss-120b": 23,
-    "NVIDIA nemotron-3-super": 2,
+    "NVIDIA gpt-oss-120b": 25,
+    "NVIDIA nemotron-3-super": 3,
     "Groq gpt-oss-120b": 1,
     "Groq qwen3.6-27b": 1,
     "NVIDIA mistral-medium-3.5": 1
