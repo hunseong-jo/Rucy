@@ -119,8 +119,8 @@
     "Gemini 3.1 Flash Lite": 2
   },
   "2026-07-26": {
-    "Cerebras zai-glm-4.7": 39,
-    "NVIDIA gpt-oss-120b": 20,
+    "Cerebras zai-glm-4.7": 41,
+    "NVIDIA gpt-oss-120b": 21,
     "NVIDIA nemotron-3-super": 2,
     "Groq gpt-oss-120b": 1,
     "Groq qwen3.6-27b": 1,
