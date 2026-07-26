@@ -75,8 +75,17 @@ def _service(which):
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())            # 토큰 만료 — 조용히 갱신합니다
-        else:
+            try:
+                creds.refresh(Request())            # 토큰 만료 — 조용히 갱신합니다
+            except Exception:
+                creds = None
+                if os.path.exists(TOKEN_PATH):
+                    try:
+                        os.remove(TOKEN_PATH)
+                    except OSError:
+                        pass
+
+        if not creds:
             print("\n  [구글] 브라우저가 열립니다. 계정을 고르고 '허용'을 눌러 주세요...")
             flow = InstalledAppFlow.from_client_secrets_file(CRED_PATH, SCOPES)
             creds = flow.run_local_server(port=0)
