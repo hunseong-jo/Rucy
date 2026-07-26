@@ -853,8 +853,13 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
 
     state는 이 대화의 살아 있는 부분입니다(messages·직전 문답·직전에 본 그림).
     notify는 진행 상황을 어디에 보여줄지 — 터미널은 print, 웹은 화면에 흘립니다.
-    """
     messages = state["messages"]
+
+    # 상대방 기기(폰/PC)가 깃허브에 새로 남긴 기억을 배경 스레드로 조용히 가져옵니다 (0.001초 딜레이 없음)
+    try:
+        session.auto_git_sync("pull")
+    except Exception:
+        pass
 
     # 대화가 길어지면 오래된 부분을 요약으로 접습니다(안 하면 토큰 한도를 넘겨 요청 자체가 거절됨).
     state["messages"], squeezed = session.compress(messages, config, call_model)

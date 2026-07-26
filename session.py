@@ -49,17 +49,21 @@ def _today():
     return datetime.date.today().isoformat()
 
 
-def auto_git_push():
+def auto_git_sync(mode="push"):
     """
-    기억이나 대화 기록이 새로 축적되었을 때 비동기 백그라운드로 깃허브에 자동 업로드합니다.
-    대화 응답 속도나 UI 흐름에 0.001초의 영향도 주지 않습니다.
+    mode="pull": 상대방 기기가 깃허브에 올려둔 최신 기억을 배경에서 조용히 가져옵니다.
+    mode="push": 새로 축적된 기억을 깃허브로 배경에서 조용히 올립니다.
+    대화 응답 속도에 0.001초의 영향도 주지 않도록 비동기 스레드로 돌립니다.
     """
     def _run():
         try:
-            subprocess.run(["git", "add", "memory/"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-            subprocess.run(["git", "commit", "-m", f"Auto sync memory [{stamp}]"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if mode == "pull":
+                subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            else:
+                subprocess.run(["git", "add", "memory/"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                subprocess.run(["git", "commit", "-m", f"Auto sync memory [{stamp}]"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception:
             pass
 
@@ -328,7 +332,7 @@ def summarize_and_save(messages, config, call_model):
         with open(NOTES_FILE, "a", encoding="utf-8") as f:
             for fact in saved:
                 f.write(f"- {fact}  ({_today()})\n")
-        auto_git_push()
+            auto_git_sync("push")
     return saved
 
 
@@ -423,7 +427,7 @@ def catch_up(config, call_model, notify=print, days=3):
                 for fact in saved:
                     f.write(f"- {fact}  ({day})\n")
             notify(f"  {day} 대화에서 {len(saved)}개를 기억했습니다")
-            auto_git_push()
+                auto_git_sync("push")
         saved_all += saved
         _mark_covered(day, size)
     return saved_all
