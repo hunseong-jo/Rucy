@@ -221,6 +221,105 @@ def apply(path, lines, ops):
     return merged, deleted, backup
 
 
+# ── 장기 대화록 자동 요약 및 압축 (30일+) ──────────────────────────────
+def archive_old_history(config, call_model=None, notify=print, days_threshold=30):
+    """
+    30일 이상 지난 대화록(memory/history/YYYY-MM-DD.md)을 정기적으로 요약하여
+    memory/summarized.json 및 notes.md에 통합 정리하고 토큰 사용을 최적화(압축)합니다.
+    """
+    import memory_search
+    import session
+
+    history_dir = os.path.join(MEMORY_DIR, "history")
+    if not os.path.exists(history_dir):
+        return 0
+
+    today = datetime.date.today()
+    cutoff_date = today - datetime.timedelta(days=days_threshold)
+
+    files = [f for f in os.listdir(history_dir) if f.endswith(".md") and re.match(r"^\d{4}-\d{2}-\d{2}\.md$", f)]
+    archived_count = 0
+
+    covered_data = session._covered()
+
+    if call_model is None:
+        try:
+            import agent
+            call_model = agent.call_model
+        except Exception:
+            pass
+
+    for fname in sorted(files):
+        day_str = fname[:-3]
+        try:
+            file_date = datetime.date.fromisoformat(day_str)
+        except ValueError:
+            continue
+
+        if file_date > cutoff_date:
+            continue
+
+        fpath = os.path.join(history_dir, fname)
+        file_size = os.path.getsize(fpath)
+
+        covered_info = covered_data.get(day_str)
+        if isinstance(covered_info, dict) and covered_info.get("archived"):
+            continue
+
+        with open(fpath, "r", encoding="utf-8", errors="replace") as f:
+            content = f.read()
+
+        if len(content.strip()) < 150:
+            covered_data[day_str] = {"size": file_size, "archived": True, "archived_at": today.isoformat()}
+            archived_count += 1
+            continue
+
+        notify(f"  30일 이상 지난 대화록({day_str}) 장기 메모리 요약 및 압축 진행...")
+
+        saved_facts = []
+        if call_model:
+            existing_notes = memory_search.load_notes()
+            prompt = session.SUMMARY_PROMPT.format(
+                existing="\n".join("- " + e for e in existing_notes) or "(없음)",
+                transcript=content[-8000:]
+            )
+            try:
+                msg, _used, _entry = call_model(config, [{"role": "user", "content": prompt}], use_tools=False)
+                facts = session._extract_json_array(msg.get("content"))
+                saved_facts = [x for x in facts if not session._is_duplicate(x, existing_notes + saved_facts, config)]
+            except Exception as e:
+                notify(f"  ({day_str} 대화록 요약 실패: {type(e).__name__} — 다음 주기에 재시도)")
+                continue
+
+        if saved_facts:
+            notes_file = os.path.join(MEMORY_DIR, "notes.md")
+            with open(notes_file, "a", encoding="utf-8") as f:
+                for fact in saved_facts:
+                    f.write(f"- {fact}  ({day_str})\n")
+            notify(f"  {day_str} 대화록에서 {len(saved_facts)}개 주요 사실을 notes.md 에 통합했습니다.")
+
+        compressed_text = f"# {day_str} 대화록 (30일 경과 요약 압축본)\n\n- 요약 일자: {today.isoformat()}\n- 추출된 핵심 정보: {len(saved_facts)}건 통합 완료\n"
+        with open(fpath, "w", encoding="utf-8") as f:
+            f.write(compressed_text)
+
+        covered_data[day_str] = {
+            "size": len(compressed_text.encode("utf-8")),
+            "archived": True,
+            "archived_at": today.isoformat(),
+            "facts_count": len(saved_facts)
+        }
+        archived_count += 1
+
+    if archived_count > 0:
+        tmp = session.COVERED_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(covered_data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, session.COVERED_FILE)
+        session.auto_git_sync("push")
+
+    return archived_count
+
+
 # ── 두 가지 문 ────────────────────────────────────────────────────
 def run(config, notify=print):
     """
@@ -232,6 +331,15 @@ def run(config, notify=print):
     cfg = config.get("daily", {}).get("consolidate", {})
     min_items = cfg.get("min_items", 10)
     done = 0
+
+    # 30일 이상 지난 대화록 장기 메모리 요약 및 압축 수행
+    try:
+        archived = archive_old_history(config, agent.call_model, notify, days_threshold=30)
+        if archived > 0:
+            notify(f"  장기 대화록 압축 요약: {archived}개 파일 처리")
+    except Exception as e:
+        notify(f"  장기 대화록 압축 요약 중 오류: {type(e).__name__}: {e}")
+
     for label, path, kind in STORES:
         lines = _read(path)
         count = len(_note_lines(lines))

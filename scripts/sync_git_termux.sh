@@ -44,8 +44,25 @@ echo -e "\n${YELLOW}[3/4] Pulling updates from GitHub (${BRANCH})...${NC}"
 if git pull --rebase origin "${BRANCH}" 2>/dev/null; then
     echo -e "${GREEN}✓ Successfully pulled remote updates.${NC}"
 else
-    echo -e "${YELLOW}! Rebase pull skipped, trying standard pull...${NC}"
-    git pull origin "${BRANCH}" || true
+    echo -e "${YELLOW}! Rebase pull encountered issues or conflict. Checking for self-healing...${NC}"
+    if git status --porcelain | grep -q "^UU\|^AA\|^UD\|^DU memory/"; then
+        echo -e "${YELLOW}[Self-Healing] Merge conflict detected in memory/ directory. Resolving automatically...${NC}"
+        git checkout --theirs memory/ 2>/dev/null || git checkout --ours memory/ 2>/dev/null
+        git add memory/
+        GIT_EDITOR=true git rebase --continue 2>/dev/null || git commit -m "Auto self-healing conflict resolution for memory" 2>/dev/null || true
+        echo -e "${GREEN}✓ Conflict in memory/ resolved automatically.${NC}"
+    else
+        echo -e "${YELLOW}! Attempting standard pull...${NC}"
+        if ! git pull origin "${BRANCH}"; then
+            if git status --porcelain | grep -q "^UU\|^AA\|^UD\|^DU memory/"; then
+                echo -e "${YELLOW}[Self-Healing] Merge conflict detected in memory/ during pull. Resolving automatically...${NC}"
+                git checkout --theirs memory/ 2>/dev/null || git checkout --ours memory/ 2>/dev/null
+                git add memory/
+                git commit -m "Auto self-healing conflict resolution for memory" 2>/dev/null || true
+                echo -e "${GREEN}✓ Conflict in memory/ resolved automatically.${NC}"
+            fi
+        fi
+    fi
 fi
 
 echo -e "\n${YELLOW}[4/4] Pushing updates to GitHub (${BRANCH})...${NC}"

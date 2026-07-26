@@ -782,6 +782,45 @@ def _safe_args(raw):
     return "{}"      # 못 고치면 빈 인자 — 그 도구 호출은 실패해도 **대화와 폴백은 살아야 합니다**
 
 
+# ── 메모리 저장 / 대화 동기화 (Auto Git Sync) ─────────────────────
+MEMORY_TOOL_NAMES = {
+    "add_note", "add_reminder", "add_todo", "done_todo", "add_event",
+    "cancel_reminder", "save_memory", "update_memory", "write_note", "save_note"
+}
+
+AUTO_SYNC_USER_PATTERN = re.compile(
+    r"("
+    r"기억\s*해|기억\s*해줘|기억\s*하자|기억\s*해두|기억\s*해둔|기억\s*해\s*줘|"
+    r"저장\s*해|저장\s*해줘|저장\s*하자|저장\s*해두|저장\s*해\s*줘|"
+    r"기록\s*해|기록\s*해줘|기록\s*하자|기록\s*해두|기록\s*해\s*줘|"
+    r"메모리.*(저장|기록|기억|남겨)|"
+    r"수고\s*(했어|했네|하세요|해|고|했음)|고생\s*(했어|했네|하세요|해|고|했음)|"
+    r"다음에\s*(이어서|보자|하자)|나중에\s*보자|"
+    r"종료|끝"
+    r")",
+    re.IGNORECASE
+)
+
+def _is_memory_tool(tool_name):
+    if not tool_name:
+        return False
+    name_lower = tool_name.lower()
+    if name_lower in MEMORY_TOOL_NAMES:
+        return True
+    return any(k in name_lower for k in ("note", "reminder", "todo", "memory"))
+
+def check_auto_git_sync_user_input(text):
+    if not text:
+        return False
+    if AUTO_SYNC_USER_PATTERN.search(text):
+        return True
+    keywords = ["기억", "저장", "기록", "메모리", "수고", "고생", "다음에", "나중에", "종료", "끝"]
+    for kw in keywords:
+        if kw in text:
+            return True
+    return False
+
+
 def run_turn(config, messages, order=None, use_tools=True, force_tool=False, deep_think=False):
     """모델이 '도구 그만 쓰고 답하겠다'고 할 때까지 돌립니다.
     deep_think=True면 추론 모드를 켤 수 있는 두뇌에 얹습니다(어려운 질문에서만)."""
@@ -845,6 +884,9 @@ def run_turn(config, messages, order=None, use_tools=True, force_tool=False, dee
                 "tool_call_id": c["id"],
                 "content": result,
             })
+            if _is_memory_tool(name):
+                print(f"    [Git Sync] 메모리 도구({name}) 실행 완료 → 백그라운드 Git Sync(Push) 자동 실행")
+                session.auto_git_sync("push")
 
     return "(도구를 너무 많이 사용해서 중단했습니다. 질문을 좀 더 좁혀서 다시 물어봐 주세요.)", "중단"
 
@@ -869,6 +911,10 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
     state는 이 대화의 살아 있는 부분입니다(messages·직전 문답·직전에 본 그림).
     notify는 진행 상황을 어디에 보여줄지 — 터미널은 print, 웹은 화면에 흘립니다.
     """
+    if check_auto_git_sync_user_input(user):
+        notify("    [Git Sync] 동기화 관련 키워드 감지 → 백그라운드 Git Sync(Push) 자동 실행")
+        session.auto_git_sync("push")
+
     messages = state["messages"]
 
     # 대화가 길어지면 오래된 부분을 요약으로 접습니다(안 하면 토큰 한도를 넘겨 요청 자체가 거절됨).
@@ -1031,6 +1077,11 @@ class ImageUnreadable(Exception):
 
 
 def new_state(config):
+    # 오프라인 푸시 큐 재시도 처리
+    try:
+        session.process_pending_sync()
+    except Exception:
+        pass
     return {
         "messages": [{"role": "system", "content": build_system_prompt(config)}],
         "last_q": "",           # 직전 문답 — 사용자가 지적하면 이걸로 실수 노트를 씁니다
@@ -1527,6 +1578,8 @@ def finish(config, messages):
             print(f"    · {fact}")
     else:
         print("  새로 기억할 만한 것은 없었습니다.")
+
+    session.auto_git_sync("push")
     print("안녕히 계세요.")
 
 

@@ -49,24 +49,99 @@ def _today():
     return datetime.date.today().isoformat()
 
 
+PENDING_SYNC_FILE = os.path.join(BASE_DIR, "memory", "pending_sync.json")
+
+
+def enqueue_pending_sync(mode="push"):
+    """네트워크 오류 또는 Push 실패 시 memory/pending_sync.json 큐에 기록"""
+    try:
+        data = []
+        if os.path.exists(PENDING_SYNC_FILE):
+            with open(PENDING_SYNC_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if not isinstance(data, list):
+                    data = []
+        data.append({
+            "mode": mode,
+            "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        })
+        os.makedirs(os.path.dirname(PENDING_SYNC_FILE), exist_ok=True)
+        tmp = PENDING_SYNC_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, PENDING_SYNC_FILE)
+    except Exception:
+        pass
+
+
+def process_pending_sync():
+    """네트워크 복구 시 memory/pending_sync.json에 쌓인 sync 작업 재시도"""
+    if not os.path.exists(PENDING_SYNC_FILE):
+        return True
+    try:
+        with open(PENDING_SYNC_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not data or not isinstance(data, list):
+            if os.path.exists(PENDING_SYNC_FILE):
+                os.remove(PENDING_SYNC_FILE)
+            return True
+
+        res = subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if res.returncode == 0:
+            os.remove(PENDING_SYNC_FILE)
+            return True
+        return False
+    except Exception:
+        return False
+
+
+def _self_heal_conflicts():
+    """git pull/rebase 시 memory/ 하위 파일 충돌 자가 치유(Self-Healing)"""
+    try:
+        proc = subprocess.run(["git", "status", "--porcelain"], cwd=BASE_DIR, capture_output=True, text=True)
+        lines = proc.stdout.splitlines() if proc.stdout else []
+        has_memory_conflict = any((line.startswith("UU") or line.startswith("AA") or line.startswith("UD") or line.startswith("DU")) and "memory" in line for line in lines)
+        if has_memory_conflict:
+            subprocess.run(["git", "checkout", "--theirs", "memory/"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["git", "add", "memory/"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            env = os.environ.copy()
+            env["GIT_EDITOR"] = "true"
+            res = subprocess.run(["git", "rebase", "--continue"], cwd=BASE_DIR, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if res.returncode != 0:
+                subprocess.run(["git", "commit", "-m", "Auto self-healing conflict resolution for memory"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
+
 def auto_git_sync(mode="push"):
     """
     mode="pull": 상대방 기기가 깃허브에 올려둔 최신 코드와 기억을 배경에서 조용히 가져옵니다.
     mode="push": 변경된 프로그램 코드 및 축적된 기억 전체를 깃허브로 배경에서 조용히 올립니다.
-    대화 응답 속도에 0.001초의 영향도 주지 않도록 비동기 스레드로 돌립니다.
+    충돌(Merge Conflict) 감지 시 memory/ 파일 자가 치유(Self-Healing) 및 오프라인 푸시 큐 적용.
     """
     def _run():
         try:
+            # 밀린 오프라인 동기화 재시도
+            process_pending_sync()
+
             if mode == "pull":
-                subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                res = subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if res.returncode != 0:
+                    _self_heal_conflicts()
             else:
-                # memory/ 뿐만 아니라 수정된 루시 프로그램 코드 전체(agent.py, web.py 등)를 스테이징
                 subprocess.run(["git", "add", "."], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
                 subprocess.run(["git", "commit", "-m", f"Auto sync code & memory [{stamp}]"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+                pull_res = subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if pull_res.returncode != 0:
+                    _self_heal_conflicts()
+
+                push_res = subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if push_res.returncode != 0:
+                    enqueue_pending_sync("push")
         except Exception:
-            pass
+            enqueue_pending_sync(mode)
 
     threading.Thread(target=_run, daemon=True).start()
 

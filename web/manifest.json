@@ -1,0 +1,20 @@
+{
+  "name": "Lucy AI Agent",
+  "short_name": "Lucy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1c1b19",
+  "theme_color": "#1c1b19",
+  "icons": [
+    {
+      "src": "/file?p=icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/file?p=icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

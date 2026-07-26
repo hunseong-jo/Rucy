@@ -36,8 +36,26 @@ echo.
 echo [3/4] Pulling remote updates from GitHub (branch: %BRANCH%)...
 git pull --rebase origin %BRANCH% 2>nul
 if %errorlevel% neq 0 (
-    echo Rebase pull skipped or not needed, attempting normal pull...
-    git pull origin %BRANCH% 2>nul
+    echo [Self-Healing] Checking for merge conflicts in memory...
+    git status --porcelain | findstr /i "memory/" >nul
+    if %errorlevel% equ 0 (
+        echo [Self-Healing] Resolving memory merge conflicts automatically...
+        git checkout --theirs memory\ 2>nul || git checkout --ours memory\ 2>nul
+        git add memory\
+        set GIT_EDITOR=true
+        git rebase --continue 2>nul || git commit -m "Auto self-healing conflict resolution for memory" 2>nul
+        echo [Self-Healing] Conflict resolved automatically!
+    ) else (
+        echo Rebase pull skipped or not needed, attempting normal pull...
+        git pull origin %BRANCH% 2>nul
+        git status --porcelain | findstr /i "memory/" >nul
+        if %errorlevel% equ 0 (
+            echo [Self-Healing] Resolving memory merge conflicts automatically...
+            git checkout --theirs memory\ 2>nul || git checkout --ours memory\ 2>nul
+            git add memory\
+            git commit -m "Auto self-healing conflict resolution for memory" 2>nul
+        )
+    )
 )
 
 echo.

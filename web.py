@@ -265,6 +265,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
         url = urllib.parse.urlparse(self.path)
         query = urllib.parse.parse_qs(url.query)
 
+        if url.path == "/manifest.json":
+            m_path = os.path.join(BASE_DIR, "web", "manifest.json")
+            if os.path.exists(m_path):
+                with open(m_path, "r", encoding="utf-8") as f:
+                    return self._send(200, f.read(), "application/manifest+json; charset=utf-8")
+            return self._send(404, b"not found", "text/plain")
+
+        if url.path == "/sw.js":
+            sw_path = os.path.join(BASE_DIR, "web", "sw.js")
+            if os.path.exists(sw_path):
+                with open(sw_path, "r", encoding="utf-8") as f:
+                    return self._send(200, f.read(), "application/javascript; charset=utf-8")
+            return self._send(404, b"not found", "text/plain")
+
         if not self._authed():
             # 첫 화면만 PIN 입력창으로 바꿔치기하고, 나머지(/file·/say)는 전부 닫습니다 —
             # 대화 내용이 담긴 mp3나 그림 파일이 PIN 없이 새어 나가면 잠근 의미가 없습니다.
