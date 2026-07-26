@@ -51,8 +51,8 @@ def _today():
 
 def auto_git_sync(mode="push"):
     """
-    mode="pull": 상대방 기기가 깃허브에 올려둔 최신 기억을 배경에서 조용히 가져옵니다.
-    mode="push": 새로 축적된 기억을 깃허브로 배경에서 조용히 올립니다.
+    mode="pull": 상대방 기기가 깃허브에 올려둔 최신 코드와 기억을 배경에서 조용히 가져옵니다.
+    mode="push": 변경된 프로그램 코드 및 축적된 기억 전체를 깃허브로 배경에서 조용히 올립니다.
     대화 응답 속도에 0.001초의 영향도 주지 않도록 비동기 스레드로 돌립니다.
     """
     def _run():
@@ -60,9 +60,10 @@ def auto_git_sync(mode="push"):
             if mode == "pull":
                 subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             else:
-                subprocess.run(["git", "add", "memory/"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                # memory/ 뿐만 아니라 수정된 루시 프로그램 코드 전체(agent.py, web.py 등)를 스테이징
+                subprocess.run(["git", "add", "."], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                subprocess.run(["git", "commit", "-m", f"Auto sync memory [{stamp}]"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                subprocess.run(["git", "commit", "-m", f"Auto sync code & memory [{stamp}]"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception:
             pass
