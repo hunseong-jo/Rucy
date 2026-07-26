@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-나만의 AI 비서 - 두뇌 교체형 에이전트
+나만의 AI 비서 — 두뇌 교체형 에이전트
 
 구조:
   [사용자] → [에이전트 루프] → [라우터: Gemini → Groq → 로컬 Ollama]
@@ -69,7 +69,7 @@ def save_tts(config):
     """
     읽어주기 설정만 config.json에 되돌려 씁니다(다음 실행에도 켜짐이 남도록).
 
-    ⚠️ config를 통째로 덮어쓰면 안 됩니다 - '--local' 모드에서는 메모리 위의 config가
+    ⚠️ config를 통째로 덮어쓰면 안 됩니다 — '--local' 모드에서는 메모리 위의 config가
     로컬 모델 하나짜리로 바뀌어 있어서, 그대로 저장하면 두뇌 6단이 파일에서 지워집니다.
     파일을 다시 읽어 tts 블록만 갈아 끼웁니다.
     """
@@ -82,7 +82,7 @@ def save_tts(config):
             json.dump(raw, f, ensure_ascii=False, indent=2)
         os.replace(tmp_file, CONFIG_FILE)
     except (OSError, ValueError) as e:
-        print(f"  (설정을 저장하지 못했습니다: {e} - 이번 실행에만 적용됩니다)")
+        print(f"  (설정을 저장하지 못했습니다: {e} — 이번 실행에만 적용됩니다)")
 
 
 def agent_name(config):
@@ -127,10 +127,10 @@ def _rest(label, minutes):
 
 
 # 추론 모드(reasoning) 인자를 얹었더니 400으로 거부한 두뇌를 기억합니다.
-# 한 번 거부당하면 이번 실행 동안은 그 두뇌에 추론 인자를 다시 얹지 않습니다 -
+# 한 번 거부당하면 이번 실행 동안은 그 두뇌에 추론 인자를 다시 얹지 않습니다 —
 # 안 그러면 어려운 질문마다 400을 한 번 맞고 인자를 떼어 재시도하느라 시간을 버립니다.
 # (추론 인자를 못 받는다고 두뇌를 **버리는 게 아니라**, 인자만 빼고 그대로 씁니다.)
-_no_reason = set()   # {label} - 추론 인자를 거부한 두뇌
+_no_reason = set()   # {label} — 추론 인자를 거부한 두뇌
 
 
 def _reasoning_for(entry, deep_think):
@@ -153,7 +153,7 @@ def resting_until(label):
     return until if until > time.time() else 0
 
 
-# 최후의 보루인 로컬 ollama가 꺼져 있으면 자동으로 켭니다 - 클라우드 두뇌가 전부
+# 최후의 보루인 로컬 ollama가 꺼져 있으면 자동으로 켭니다 — 클라우드 두뇌가 전부
 # 한도·오류로 막혀도 루시가 "모든 모델이 실패"로 멈추지 않게 하는 안전망입니다.
 # doctor는 시작 시·새벽에만 돌아 '대화 도중 ollama가 죽는' 창을 못 막으므로,
 # 로컬 두뇌를 부르기 직전에 매번 여기서 확인합니다. serve는 프로세스당 한 번만 띄웁니다.
@@ -217,11 +217,11 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
     """살아있는 첫 번째 모델의 응답을 돌려줍니다. (응답, 모델 이름, 모델 설정)
 
     deep_think=True이면 그 두뇌에 추론 모드(reasoning) 설정이 있을 때 얹어 더 깊게
-    생각하게 합니다 - 어려운 질문에서만 켭니다(토큰·속도를 그때만 씁니다)."""
+    생각하게 합니다 — 어려운 질문에서만 켭니다(토큰·속도를 그때만 씁니다)."""
     problems = []
     cool = config.get("quota_cooldown_min", {})
 
-    # 부른 쪽이 순서를 직접 준 경우(눈 전용 순서 등)는 그대로 씁니다 - 그쪽이 더 잘 압니다.
+    # 부른 쪽이 순서를 직접 준 경우(눈 전용 순서 등)는 그대로 씁니다 — 그쪽이 더 잘 압니다.
     # 기본 순서일 때만 계측을 보고 만성 고장·만성 지연 두뇌를 뒤로 미룹니다(config는 안 고침).
     if order is None:
         order = status.rank(config, config["models"])
@@ -239,13 +239,13 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
             continue
 
         # 최후의 보루(로컬 ollama)는 부르기 직전에 서버가 켜져 있는지 확인하고, 꺼져 있으면
-        # 자동으로 켜서 기다립니다 - 위 클라우드 두뇌가 다 막혀도 이 두뇌만은 답하게 합니다.
+        # 자동으로 켜서 기다립니다 — 위 클라우드 두뇌가 다 막혀도 이 두뇌만은 답하게 합니다.
         if is_local and not _ensure_ollama():
             problems.append(f"{label}: ollama를 켜지 못했습니다 (설치를 확인하세요)")
             continue
 
         # 작은 로컬 모델은 "모르면 검색하라"는 지시를 흘려듣고 사실을 지어냅니다
-        # (실제로 북한산 높이를 2,743m라고 답한 적이 있음 - 정답은 836m).
+        # (실제로 북한산 높이를 2,743m라고 답한 적이 있음 — 정답은 836m).
         # 그래서 해당 모델을 쓸 때만 경고를 생성 직전에 한 번 더 박아 넣습니다.
         msgs = messages
         if entry.get("reminder") and use_tools:
@@ -253,7 +253,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
 
         # 추론 모드: 이 두뇌가 어려운 질문을 더 깊게 생각하도록 켭니다(deep_think일 때만).
         # reason_payload = 페이로드에 병합할 키(예: reasoning_effort). 아래 400 안전망이 지킵니다.
-        # reason_sys = 시스템 메시지로 켜는 방식(nemotron의 "detailed thinking on") - 무해하므로 항상 유지.
+        # reason_sys = 시스템 메시지로 켜는 방식(nemotron의 "detailed thinking on") — 무해하므로 항상 유지.
         reason_payload, reason_sys = _reasoning_for(entry, deep_think)
         if reason_sys:
             msgs = msgs + [{"role": "system", "content": reason_sys}]
@@ -270,7 +270,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
         clean_msgs = []
         for m in msgs_to_send:
             if m.get("_from") == label and m.get("_raw"):
-                # 이 메시지를 만든 바로 그 두뇌에게는 원문 그대로 -
+                # 이 메시지를 만든 바로 그 두뇌에게는 원문 그대로 —
                 # Gemini는 자기가 붙인 thought_signature를 못 돌려받으면 400을 냅니다.
                 clean_msgs.append(m["_raw"])
                 continue
@@ -290,7 +290,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
                     payload["tool_choice"] = "required"   # 반드시 도구를 쓰게 강제
 
         # 추론 인자를 얹은 body를 만듭니다. with_reasoning=False면 인자를 빼고 만듭니다
-        # (400 안전망이 재시도할 때 씁니다 - 이 두뇌가 추론 인자를 못 받아도 답은 받아냅니다).
+        # (400 안전망이 재시도할 때 씁니다 — 이 두뇌가 추론 인자를 못 받아도 답은 받아냅니다).
         def _make_body(with_reasoning):
             p = dict(payload)
             if with_reasoning and reason_payload:
@@ -310,7 +310,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
 
         url = entry["base_url"].rstrip("/") + "/chat/completions"
 
-        fail_kind = None                      # 이 두뇌가 왜 못 답했나(계측용) - 성공하면 None
+        fail_kind = None                      # 이 두뇌가 왜 못 답했나(계측용) — 성공하면 None
         has_alternatives = any(not _resting(m["label"]) for m in order[i_entry + 1:])
 
         for attempt in range(3):
@@ -321,7 +321,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
                     data = json.loads(resp.read().decode("utf-8"))
                 if not data.get("choices"):
                     # OpenRouter(무료 라우터)는 위쪽 모델이 죽으면 **200인데 error 몸통**을
-                    # 줍니다 - 그대로 두면 KeyError '연결 실패'로 뭉개져 원인이 안 보입니다.
+                    # 줍니다 — 그대로 두면 KeyError '연결 실패'로 뭉개져 원인이 안 보입니다.
                     err = data.get("error") or {}
                     note = str(err.get("message") or data)[:160]
                     problems.append(f"{label}: 응답에 답이 없음 ({note})")
@@ -329,7 +329,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
                     break
                 message = data["choices"][0]["message"]
                 message["content"] = _clean(message.get("content"))
-                status.record(label)          # '/상태'의 '오늘 몇 번 썼나' - 실패해도 조용합니다
+                status.record(label)          # '/상태'의 '오늘 몇 번 썼나' — 실패해도 조용합니다
                 # i_entry>0이면 폴백: 위 두뇌들이 못 답해 여기까지 내려온 것입니다.
                 status.record_call(label, time.time() - t0, i_entry)
                 return message, label, entry
@@ -352,7 +352,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
                         break
                     elif attempt < 2:
                         wait = 1.5
-                        print(f"    -> {label}: 서버 혼잡({e.code}) - {wait}초 후 재시도")
+                        print(f"    -> {label}: 서버 혼잡({e.code}) — {wait}초 후 재시도")
                         time.sleep(wait)
                         continue
                 if e.code == 429:
@@ -416,7 +416,7 @@ def call_model(config, messages, use_tools=True, order=None, force_tool=False, d
                 break
 
         if fail_kind:
-            status.record_fail(label, fail_kind)   # 계측 - 왜 못 답했나(조용)
+            status.record_fail(label, fail_kind)   # 계측 — 왜 못 답했나(조용)
         print(f"    -> {problems[-1]}")
 
     raise AllModelsFailed("\n".join("  · " + p for p in problems))
@@ -437,7 +437,7 @@ def is_hard(user_text, config):
     return len(text) > routing.get("easy_max_len", 30) or any(k in text for k in HARD_MARKERS)
 
 
-# '여러 갈래를 한 번에 묻는' 큰 질문인지. 이런 건 통째로 답하면 한 갈래를 빠뜨립니다 -
+# '여러 갈래를 한 번에 묻는' 큰 질문인지. 이런 건 통째로 답하면 한 갈래를 빠뜨립니다 —
 # 하위 문제로 쪼개 각각 확인한 뒤 종합하게 지시합니다(아래 DECOMPOSE_HINT). 추가 호출은 없습니다.
 def is_very_hard(user_text, config):
     routing = config.get("routing", {})
@@ -524,7 +524,7 @@ def recall_for(user_text, config):
     print(f"    [기억] {method}")
     return {
         "role": "system",
-        "content": "[관련 기억 - 이미 아는 사실로 취급한다]\n" + "\n".join("- " + n for n in picked),
+        "content": "[관련 기억 — 이미 아는 사실로 취급한다]\n" + "\n".join("- " + n for n in picked),
     }
 
 
@@ -591,7 +591,7 @@ PLAN_HINT = (
 )
 
 # 여러 갈래를 한꺼번에 묻는 큰 질문에만 덧붙입니다(is_very_hard). 통째로 답하다 한 갈래를
-# 빠뜨리는 걸 막습니다 - 하위 문제로 쪼개, 각각 확인한 뒤 종합하게 합니다. 추가 호출은 없습니다.
+# 빠뜨리는 걸 막습니다 — 하위 문제로 쪼개, 각각 확인한 뒤 종합하게 합니다. 추가 호출은 없습니다.
 DECOMPOSE_HINT = (
     "이 요청은 여러 갈래가 섞여 있다. 곧바로 답하지 말고, 먼저 답해야 할 하위 질문을 "
     "2~5개로 쪼개 번호로 적어라. 그런 다음 하나씩 필요한 도구로 확인하며 풀고, "
@@ -601,7 +601,7 @@ DECOMPOSE_HINT = (
 
 # 참조 그림을 '보고' 3D로 만들어 달라는 요청에 붙는 안내(세션68). 이 턴은 눈으로 보는 턴이라
 # 도구가 꺼져 있으므로, 루시가 "기능이 없다"고 부정하는 대신 그림을 읽고 만들기를 제안하게 한다.
-# ⚠️도구가 이 턴엔 없으니 여기서 실제 조립을 시키지 않는다 - 본 것을 설명하고 다음 단계로 넘긴다.
+# ⚠️도구가 이 턴엔 없으니 여기서 실제 조립을 시키지 않는다 — 본 것을 설명하고 다음 단계로 넘긴다.
 MODEL_FROM_REF = (
     "지금은 참조 그림을 눈으로 '보는' 턴이라 이 턴에는 도구가 꺼져 있다. "
     "너는 3D 모델링 도구(blender_3d의 build로 프리미티브 조립, sculpt_displace로 표면 요철 등)를 "
@@ -610,7 +610,7 @@ MODEL_FROM_REF = (
     "네가 본 대로 설명하라. 그런 다음 이걸 어떤 치수의 그레이박스로 만들면 좋을지 네가 먼저 제안하고, "
     "사용자가 좋다고 하면 다음 단계에서 blender_3d로 실제 조립하겠다고 안내하라. "
     "파일 이름은 이 그림에서 본 대상으로 정하고, 기억 속 다른 프로젝트 이름을 쓰지 마라. "
-    "⚠️사진을 그대로 자동 재현하는 기능은 없다 - 네가 본 형태를 치수로 옮겨 근사하는 것이다. "
+    "⚠️사진을 그대로 자동 재현하는 기능은 없다 — 네가 본 형태를 치수로 옮겨 근사하는 것이다. "
     "그러니 사용자에게 텍스트로 치수를 불러 달라고 요구하기 전에, 먼저 그림을 보고 네가 읽어낸 형태와 "
     "제안 치수를 내놓아라(사용자는 그걸 고쳐주기만 하면 되게)."
 )
@@ -660,7 +660,7 @@ REVIEW_PROMPT = """너는 방금 작성된 답변을 검토하는 감수자다.
 
 
 def _evidence(messages, limit=3000):
-    """마지막 턴에서 도구가 돌려준 것들 - 감수자가 답과 대조할 근거입니다."""
+    """마지막 턴에서 도구가 돌려준 것들 — 감수자가 답과 대조할 근거입니다."""
     bits = [str(m.get("content", "")) for m in messages if m.get("role") == "tool"]
     return ("\n---\n".join(bits))[-limit:] if bits else "(도구를 쓰지 않음)"
 
@@ -669,12 +669,12 @@ def review(config, messages, question, answer, order=None, author=None):
     """답을 내보내기 전에 한 번 더 훑습니다. 고칠 게 있으면 고친 답을 돌려줍니다.
 
     author(답을 낸 두뇌)를 주면, 감수는 **다른 두뇌**가 하도록 순서를 바꿉니다.
-    자기 답을 자기가 검토하면 같은 착각을 그대로 넘기기 쉽습니다 - 두 번째 시선이
+    자기 답을 자기가 검토하면 같은 착각을 그대로 넘기기 쉽습니다 — 두 번째 시선이
     지어냄·계산오류를 더 잘 잡습니다. 추가 호출 수는 그대로(감수 1회)입니다."""
     rorder = order
     if author and config.get("deliberate", {}).get("review_independent", True):
         base = order or status.rank(config, config["models"])
-        # 답을 낸 두뇌는 맨 뒤로 - 다른 두뇌가 다 막혔을 때만 자기가 검토합니다.
+        # 답을 낸 두뇌는 맨 뒤로 — 다른 두뇌가 다 막혔을 때만 자기가 검토합니다.
         rorder = ([e for e in base if e["label"] != author]
                   + [e for e in base if e["label"] == author])
     prompt = REVIEW_PROMPT.format(
@@ -702,13 +702,13 @@ def sanitize(message, from_label=None):
     ⚠️ 이걸 안 하면 두뇌를 갈아탈 수 없습니다(실제로 겪음). 공급자마다 tool_calls에 자기만의
        여분 필드를 얹어 보내는데(Gemini는 extra_content), 그걸 그대로 다음 요청에 되실으면
        **Cerebras가 400 "property ... is unsupported"로 대화를 통째로 거부**합니다.
-       한도 초과로 폴백이 일어난 순간부터 도구를 쓴 대화는 그 두뇌에서 영영 못 이어집니다 -
+       한도 초과로 폴백이 일어난 순간부터 도구를 쓴 대화는 그 두뇌에서 영영 못 이어집니다 —
        벤치 1위 두뇌가 조용히 무용지물이 되는 셈입니다.
        규격에 있는 것만 남기면 어느 두뇌든 남의 대화를 이어받을 수 있습니다.
 
     ⚠️ 그런데 **만든 본인에게는 원문을 돌려줘야** 합니다(이것도 실제로 겪음). Gemini 3는
        자기가 tool_calls에 붙인 thought_signature를 다음 요청에서 되돌려 받지 못하면
-       400으로 거절합니다 - 깎은 것만 남기면 이번엔 Gemini가 자기 대화를 못 잇습니다.
+       400으로 거절합니다 — 깎은 것만 남기면 이번엔 Gemini가 자기 대화를 못 잇습니다.
        그래서 원문을 _raw에 접어 두고, call_model이 **그 두뇌에게 보낼 때만** 원문을 씁니다.
        (_로 시작하는 필드는 요청에 실리지 않으므로 다른 두뇌는 볼 일이 없습니다)
     """
@@ -719,7 +719,7 @@ def sanitize(message, from_label=None):
     if calls:
         # ⚠️ arguments는 그대로 두지 말고 반드시 유효한 JSON으로 다듬습니다(실제로 겪음).
         #    모델이 인자 문자열 안에 생 줄바꿈을 뱉으면(긴 본문 인자에서 잘 남),
-        #    그 메시지가 대화에 남는 순간부터 Groq·Ollama가 **대화 전체를 400으로 거부** -
+        #    그 메시지가 대화에 남는 순간부터 Groq·Ollama가 **대화 전체를 400으로 거부** —
         #    한도 폴백과 겹치면 '모든 두뇌 실패'로 대화가 통째로 죽습니다(2026-07-14 실사).
         #    본인에게 돌아가는 _raw 안의 arguments도 같이 고칩니다(본인 서버도 되받으면 검증함).
         for c in calls:
@@ -764,7 +764,7 @@ def _safe_args(raw):
             return json.dumps(got, ensure_ascii=False)
     except Exception:
         pass
-    return "{}"      # 못 고치면 빈 인자 - 그 도구 호출은 실패해도 **대화와 폴백은 살아야 합니다**
+    return "{}"      # 못 고치면 빈 인자 — 그 도구 호출은 실패해도 **대화와 폴백은 살아야 합니다**
 
 
 def run_turn(config, messages, order=None, use_tools=True, force_tool=False, deep_think=False):
@@ -852,14 +852,9 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
     반쪽짜리가 됩니다. 그래서 흐름은 여기 한 벌만 둡니다.
 
     state는 이 대화의 살아 있는 부분입니다(messages·직전 문답·직전에 본 그림).
-    notify는 진행 상황을 어디에 보여줄지 - 터미널은 print, 웹은 화면에 흘립니다.
+    notify는 진행 상황을 어디에 보여줄지 — 터미널은 print, 웹은 화면에 흘립니다.
+    """
     messages = state["messages"]
-
-    # 상대방 기기(폰/PC)가 깃허브에 새로 남긴 기억을 배경 스레드로 조용히 가져옵니다 (0.001초 딜레이 없음)
-    try:
-        session.auto_git_sync("pull")
-    except Exception:
-        pass
 
     # 대화가 길어지면 오래된 부분을 요약으로 접습니다(안 하면 토큰 한도를 넘겨 요청 자체가 거절됨).
     state["messages"], squeezed = session.compress(messages, config, call_model)
@@ -867,7 +862,7 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
     if squeezed:
         notify("[압축] 대화가 길어져 오래된 부분을 요약으로 접었습니다")
 
-    # '/컴퓨터 ...' - 도구가 없는 프로그램은 손으로 만져야 합니다.
+    # '/컴퓨터 ...' — 도구가 없는 프로그램은 손으로 만져야 합니다.
     # 화면을 찍어 보고 → 다음 한 동작을 정하고 → 진짜 마우스·키보드를 움직입니다.
     # 일꾼(worker)보다 먼저 봅니다: "/컴퓨터 ... 알아서 다 해줘"는 손으로 하는 일이지
     # 도구로 하는 일이 아니기 때문입니다(두 트리거가 겹치면 앞의 것이 이깁니다).
@@ -875,7 +870,7 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
         return computer.run(config, state, computer.strip_request(user), call_model,
                             notify=notify, confirm=confirm, log=session.log_turn)
 
-    # '/일 ...' - 여러 단계짜리 일은 한 번의 문답으로 끝나지 않습니다.
+    # '/일 ...' — 여러 단계짜리 일은 한 번의 문답으로 끝나지 않습니다.
     # 계획을 세우고 한 단계씩 실행·검증하는 바깥 루프(worker)에 넘깁니다.
     # respond() 안에 두는 이유: 터미널과 웹이 이 함수 하나를 공유하므로 여기 두면 양쪽이 함께 얻습니다.
     if worker.enabled(config) and worker.wants(user):
@@ -894,7 +889,7 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
     # 이미지 경로가 섞여 있으면 '보는 턴'으로 바뀝니다. (예: "바탕화면\에러.png 이거 무슨 오류야?")
     question, images = user, []
 
-    # "지금 화면 좀 봐줘" - 파일이 아니라 지금 모니터에 떠 있는 것을 봅니다.
+    # "지금 화면 좀 봐줘" — 파일이 아니라 지금 모니터에 떠 있는 것을 봅니다.
     # 찍은 그림은 아래 비전 흐름을 그대로 타므로, 보는 턴 규칙(도구·감수 끔)이 공짜로 적용됩니다.
     if (screen.enabled(config) and (force_screen or screen.wants(user))
             and not vision.wants_edit(user)):
@@ -1000,14 +995,14 @@ def respond(config, state, user, notify=print, force_screen=False, confirm=_ask_
     # 사용자가 방금 한 말이 지적이었다면, 직전 문답을 교훈으로 남깁니다.
     # (답을 다 내보낸 뒤에 해야 하지만, 웹은 답을 한 번에 보내므로 여기서 적습니다)
     # 판단력 3층(세션63 5부): "틀렸어"뿐 아니라 "천이 너무 뻣뻣해" 같은 **작품 품질 지적**도
-    # 신호 - 이때는 도구 인자를 어떻게 바꿀지(kind=craft)로 교훈을 뽑습니다.
+    # 신호 — 이때는 도구 인자를 어떻게 바꿀지(kind=craft)로 교훈을 뽑습니다.
     if state.get("last_q") and state.get("last_a"):
         craft = lessons.is_craft_complaint(user, state["last_a"])
         if craft or lessons.is_correction(user):
             lesson = lessons.learn(config, call_model, state["last_q"], state["last_a"],
                                    user, answer, kind="craft" if craft else "answer")
             if lesson:
-                notify(f"[실수 노트] 적었습니다 - {lesson}")
+                notify(f"[실수 노트] 적었습니다 — {lesson}")
 
     state["last_q"], state["last_a"], state["last_images"] = question, answer, images
     return answer, used
@@ -1020,9 +1015,9 @@ class ImageUnreadable(Exception):
 def new_state(config):
     return {
         "messages": [{"role": "system", "content": build_system_prompt(config)}],
-        "last_q": "",           # 직전 문답 - 사용자가 지적하면 이걸로 실수 노트를 씁니다
+        "last_q": "",           # 직전 문답 — 사용자가 지적하면 이걸로 실수 노트를 씁니다
         "last_a": "",
-        "last_images": [],      # 직전에 본 그림 - "이 그림에서 ~는?" 후속 질문에 다시 붙입니다
+        "last_images": [],      # 직전에 본 그림 — "이 그림에서 ~는?" 후속 질문에 다시 붙입니다
     }
 
 
@@ -1037,7 +1032,7 @@ def main():
 
     print("=" * 60)
     print(f"  {name}"
-          + ("  [로컬 전용 모드 - 외부로 전송 안 함]" if "--local" in sys.argv else ""))
+          + ("  [로컬 전용 모드 — 외부로 전송 안 함]" if "--local" in sys.argv else ""))
     print("  모델 우선순위:")
     for i, entry in enumerate(config["models"], 1):
         key = load_key(entry)
@@ -1053,7 +1048,7 @@ def main():
     print("  종료하려면 exit 입력")
     print("=" * 60)
 
-    # 제 몸 점검 - 문제가 있으면 말하고, 켜서 고칠 수 있는 건 그 자리에서 켭니다.
+    # 제 몸 점검 — 문제가 있으면 말하고, 켜서 고칠 수 있는 건 그 자리에서 켭니다.
     # 전부 정상이면 아무 말 없습니다. 점검이 죽어도 비서는 켜져야 하므로 감쌉니다.
     try:
         doctor.run(config, notify=lambda m: print(f"  {m}"))
@@ -1083,7 +1078,7 @@ def main():
             finish(config, messages)
             return
 
-        # '/읽기' - 답을 소리로 읽어줄지 켜고 끕니다. '/읽기 목록'으로 목소리를 고릅니다.
+        # '/읽기' — 답을 소리로 읽어줄지 켜고 끕니다. '/읽기 목록'으로 목소리를 고릅니다.
         if user.startswith("/읽기"):
             rest = user[3:].strip()
             conf = config.setdefault("tts", {})
@@ -1099,7 +1094,7 @@ def main():
                     print("  바꾸려면: /읽기 엔진 구글   또는   /읽기 엔진 윈도우")
                 elif pick in aliases:
                     first = aliases[pick]
-                    # 고른 엔진을 맨 앞에 두되 나머지는 뒤에 남깁니다 - 구글이 안 될 때
+                    # 고른 엔진을 맨 앞에 두되 나머지는 뒤에 남깁니다 — 구글이 안 될 때
                     # 조용해지는 것보다 딱딱한 목소리라도 읽어주는 편이 낫습니다.
                     conf["engines"] = [first] + [e for e in tts.ALL_ENGINES if e != first]
                     conf["enabled"] = True
@@ -1153,7 +1148,7 @@ def main():
                 conf["enabled"] = not conf.get("enabled", False)
                 save_tts(config)
                 if conf["enabled"]:
-                    print("  읽어주기 켜짐 - 말하는 중에 엔터를 치면 멈춥니다.")
+                    print("  읽어주기 켜짐 — 말하는 중에 엔터를 치면 멈춥니다.")
                     tts.speak("읽어주기를 켰어요.", config)
                 else:
                     print("  읽어주기 꺼짐.")
@@ -1165,7 +1160,7 @@ def main():
                 continue
             print(f"나 (음성) > {user}")
 
-        # '/음성모드' - 연속 음성 대화: 말이 끝나면 알아서 답하고, 다 읽으면 다시 듣습니다.
+        # '/음성모드' — 연속 음성 대화: 말이 끝나면 알아서 답하고, 다 읽으면 다시 듣습니다.
         # '/음성모드 시험'은 마이크 음량을 실시간으로 보여줍니다(문턱값 맞추기용, 전송 없음).
         if user.startswith("/음성모드") or user in ("음성모드", "연속음성"):
             if "시험" in user or "음량" in user:
@@ -1175,29 +1170,29 @@ def main():
                 messages = state["messages"]
             continue
 
-        # '/지식갱신' - 클로드가 새로 정리한 노트를 지식 창고로 다시 가져옵니다.
+        # '/지식갱신' — 클로드가 새로 정리한 노트를 지식 창고로 다시 가져옵니다.
         if user.startswith("/지식"):
             count, where = knowledge.sync()
             if not count:
                 print(f"  가져오지 못했습니다: {where}")
             else:
                 print(f"  노트 {count}개를 가져왔습니다 → {where}")
-                print("  (임베딩 인덱스는 다음 검색 때 다시 만듭니다 - 몇 분 걸릴 수 있습니다)")
+                print("  (임베딩 인덱스는 다음 검색 때 다시 만듭니다 — 몇 분 걸릴 수 있습니다)")
             continue
 
-        # '/문서색인' - PC 문서 색인을 지금 다시 만듭니다(평소엔 검색할 때 알아서 갱신됩니다).
+        # '/문서색인' — PC 문서 색인을 지금 다시 만듭니다(평소엔 검색할 때 알아서 갱신됩니다).
         if user.startswith("/문서색인") or user.startswith("/색인"):
             force = "전체" in user or "처음부터" in user
             print("  PC 문서를 훑는 중입니다" + (" (전체 다시 읽기)" if force else "")
-                  + " - 처음이면 몇 분 걸릴 수 있습니다...")
+                  + " — 처음이면 몇 분 걸릴 수 있습니다...")
             added, total, failed = docsearch.build(config, force=force)
             print(f"  문서 {total}개를 색인했습니다 (새로 읽음 {added}개"
                   + (f", 못 읽음 {failed}개" if failed else "") + ")")
             print("  이제 '작년에 쓴 그 계약서 찾아줘' 처럼 물어보세요.")
             continue
 
-        # '/복습' - 최근 대화를 되읽고, 지적받지 않은 실수에서도 스스로 교훈을 뽑습니다.
-        # (평소엔 매일 새벽에 어제치를 알아서 합니다 - 이건 지금 바로 돌아보고 싶을 때)
+        # '/복습' — 최근 대화를 되읽고, 지적받지 않은 실수에서도 스스로 교훈을 뽑습니다.
+        # (평소엔 매일 새벽에 어제치를 알아서 합니다 — 이건 지금 바로 돌아보고 싶을 때)
         if user.startswith("/복습"):
             day = study.last_day(include_today=True)
             if not day:
@@ -1209,7 +1204,7 @@ def main():
                 print("  새로 배울 교훈이 없습니다. (없으면 없는 게 정답입니다)")
             continue
 
-        # '/공부 <주제>' - 주제를 스스로 조사해 지식 창고에 노트로 남깁니다.
+        # '/공부 <주제>' — 주제를 스스로 조사해 지식 창고에 노트로 남깁니다.
         # 주제를 안 주면 최근 대화에서 얕게 답했던 주제를 스스로 고릅니다.
         if user.startswith("/공부"):
             topic = user[3:].strip()
@@ -1225,18 +1220,18 @@ def main():
                 print("  이제 이 주제를 물으면 공부한 노트로 답합니다.")
             continue
 
-        # '/점검' - 제 몸(목소리 서버·기억 검색·알림·구글)을 점검하고 고칠 수 있는 건 고칩니다.
+        # '/점검' — 제 몸(목소리 서버·기억 검색·알림·구글)을 점검하고 고칠 수 있는 건 고칩니다.
         if user.startswith("/점검"):
             doctor.run(config, notify=lambda m: print(f"  {m}"), verbose=True)
             continue
 
-        # '/상태' - 살림 현황판. '/점검'이 몸이라면 이건 가계부입니다:
+        # '/상태' — 살림 현황판. '/점검'이 몸이라면 이건 가계부입니다:
         # 두뇌별 오늘 사용횟수·쿨다운, 기억·지식·교훈 수, 새벽 일과가 언제 돌았나.
         if user.startswith("/상태"):
             print(status.report(config, cooldown=_cooldown))
             continue
 
-        # '/감시 <무엇이 되면>' - 화면을 지켜보다 이루어지면 소리+창으로 알립니다
+        # '/감시 <무엇이 되면>' — 화면을 지켜보다 이루어지면 소리+창으로 알립니다
         # (유니티 빌드·다운로드처럼 화면으로만 알 수 있는 일의 끝을 대신 기다립니다).
         if user.startswith("/감시"):
             rest = user[3:].strip()
@@ -1248,7 +1243,7 @@ def main():
                 print("  " + watch.start(config, rest).replace("\n", "\n  "))
             continue
 
-        # '/유튜브 <주소>' - 영상 자막을 받아 요약하고 지식 창고에 넣습니다.
+        # '/유튜브 <주소>' — 영상 자막을 받아 요약하고 지식 창고에 넣습니다.
         # 말로 시켜도 됩니다: 주소 + '요약/정리/공부' 낱말이 함께 있으면 알아듣습니다.
         yt = user[4:].strip() if user.startswith("/유튜브") else youtube.wants(user)
         if user.startswith("/유튜브") or yt:
@@ -1262,8 +1257,8 @@ def main():
                 print(f"  요약하지 못했습니다: {e}")
                 continue
             print(f"\n{name} (유튜브 요약) > {note}")
-            print(f"\n  → {os.path.basename(path)} - 이제 이 영상 내용을 물어보면 찾아서 답합니다.")
-            # 요약을 대화에도 남깁니다 - "방금 그 영상에서 ~는 뭐래?" 같은 후속 질문이 되게.
+            print(f"\n  → {os.path.basename(path)} — 이제 이 영상 내용을 물어보면 찾아서 답합니다.")
+            # 요약을 대화에도 남깁니다 — "방금 그 영상에서 ~는 뭐래?" 같은 후속 질문이 되게.
             messages.append({"role": "user", "content": user})
             messages.append({"role": "assistant", "content": note[:2000]})
             session.log_turn("나", user)
@@ -1271,18 +1266,18 @@ def main():
             tts.speak("영상 요약을 마쳤어요. 자세한 내용은 화면을 보세요.", config)
             continue
 
-        # '/기억정리' - 쌓인 기억을 지금 훑어 같은 주제는 합치고 지난 일정은 지웁니다.
-        # (평소엔 일주일에 한 번 새벽에 알아서 합니다 - 이건 미리 보고 골라서 적용하고 싶을 때)
+        # '/기억정리' — 쌓인 기억을 지금 훑어 같은 주제는 합치고 지난 일정은 지웁니다.
+        # (평소엔 일주일에 한 번 새벽에 알아서 합니다 — 이건 미리 보고 골라서 적용하고 싶을 때)
         if user.startswith("/기억정리"):
             consolidate.run_interactive(config, call_model)
             continue
 
-        # '/벤치' - 두뇌들을 직접 시험해 순위를 다시 매기고 config.json을 고쳐 씁니다.
+        # '/벤치' — 두뇌들을 직접 시험해 순위를 다시 매기고 config.json을 고쳐 씁니다.
         if user.startswith("/벤치") or user.lower().startswith("/bench"):
             run_bench(config)
             continue
 
-        # '/교훈' - 실수 노트를 보거나 지웁니다. 사람이 직접 적어 넣을 수도 있습니다.
+        # '/교훈' — 실수 노트를 보거나 지웁니다. 사람이 직접 적어 넣을 수도 있습니다.
         if user.startswith("/교훈"):
             rest = user[3:].strip()
             if rest.startswith("삭제"):
@@ -1301,14 +1296,14 @@ def main():
                     print("  지우려면: /교훈 삭제 <교훈에 든 말>")
             continue
 
-        # '/보기 <경로> <질문>' - 그림을 보여주며 묻습니다. (경로만 적어도 자동으로 알아봅니다)
+        # '/보기 <경로> <질문>' — 그림을 보여주며 묻습니다. (경로만 적어도 자동으로 알아봅니다)
         if user.startswith("/보기"):
             user = user[3:].strip()
             if not user:
                 print("  사용법: /보기 <이미지 경로> <질문>   (예: /보기 에러.png 이거 무슨 오류야?)")
                 continue
 
-        # '/브리핑' - 아침 브리핑을 지금 받아봅니다(정한 시각에는 알림 일꾼이 알아서 합니다).
+        # '/브리핑' — 아침 브리핑을 지금 받아봅니다(정한 시각에는 알림 일꾼이 알아서 합니다).
         if user.startswith("/브리핑"):
             try:
                 text = daily.briefing(config, notify=lambda m: print(f"  {m}"))
@@ -1320,14 +1315,14 @@ def main():
             tts.speak(text, config)
             continue
 
-        # '/화면 <질문>' - 지금 모니터에 떠 있는 것을 찍어서 보여주며 묻습니다.
+        # '/화면 <질문>' — 지금 모니터에 떠 있는 것을 찍어서 보여주며 묻습니다.
         # (그냥 "지금 화면 좀 봐줘"라고 해도 respond()가 알아서 찍습니다. 이건 확실하게 찍고 싶을 때)
         screen_now = False
         if user.startswith("/화면"):
             user = user[3:].strip() or "이 화면을 설명해줘."
             screen_now = True
 
-        # '/검증 질문' - 두 두뇌에게 따로 묻고 답을 대조합니다(중요한 질문용).
+        # '/검증 질문' — 두 두뇌에게 따로 묻고 답을 대조합니다(중요한 질문용).
         if user.startswith("/검증") or user.lower().startswith("/x"):
             question = user.split(maxsplit=1)[1] if len(user.split(maxsplit=1)) > 1 else ""
             if not question:
@@ -1344,7 +1339,7 @@ def main():
                 continue
             user = question   # 교차검증이 불가능하면 평소대로 진행
 
-        # "빌드 끝나면 알려줘" - 명령이 아니라 말로 시켜도 화면 지켜보기를 제안합니다.
+        # "빌드 끝나면 알려줘" — 명령이 아니라 말로 시켜도 화면 지켜보기를 제안합니다.
         # 오발동하면 한 시간짜리 감시가 돌므로 자연어 트리거는 시작 전에 한 번 묻습니다.
         if watch.wants(user):
             picked = input("  화면을 지켜보다 알려드릴까요? [y/N] ").strip().lower()
@@ -1366,7 +1361,7 @@ def main():
             continue
 
         print(f"\n{name} ({used}) > {answer}")
-        tts.speak(answer, config)     # 기다리지 않습니다 - 읽는 동안에도 바로 다음 질문을 할 수 있습니다
+        tts.speak(answer, config)     # 기다리지 않습니다 — 읽는 동안에도 바로 다음 질문을 할 수 있습니다
         messages = state["messages"]
 
 
@@ -1374,10 +1369,10 @@ def run_bench(config):
     """
     두뇌들을 실제로 시험해 순위를 다시 매깁니다.
 
-    무료 모델판은 계속 바뀝니다 - 어제 빠르던 게 오늘 한도에 걸리고, 서비스가 막히기도 합니다.
+    무료 모델판은 계속 바뀝니다 — 어제 빠르던 게 오늘 한도에 걸리고, 서비스가 막히기도 합니다.
     그때마다 사람이 config를 손보는 대신 루시가 스스로 재보고 정하게 합니다.
     """
-    print("\n  두뇌 벤치를 시작합니다. 모델마다 4가지를 실제로 시킵니다 -")
+    print("\n  두뇌 벤치를 시작합니다. 모델마다 4가지를 실제로 시킵니다 —")
     print("  검색·도구2개·추론(순위) + 그림을 볼 수 있는지(눈 명단 갱신).")
     print("  모델 수에 따라 2~6분 걸립니다.\n")
 
@@ -1411,10 +1406,10 @@ JUDGE_PROMPT = """서로 다른 두 AI가 같은 질문에 답했다. 최종 답
 [질문]
 {question}
 
-[A의 답 - {a_label}]
+[A의 답 — {a_label}]
 {a}
 
-[B의 답 - {b_label}]
+[B의 답 — {b_label}]
 {b}
 
 두 답이 일치하면 그대로 하나의 답으로 정리하라.
@@ -1429,7 +1424,7 @@ def crosscheck(config, question):
 
     모델 '합치기'(가중치 병합)는 부모보다 똑똑해지지 않지만,
     각자 답하게 한 뒤 대조하는 건 실제로 오류를 잡아냅니다. 둘 다 무료라 비용도 0입니다.
-    대신 느리고 무료 한도를 두 배로 씁니다 - 그래서 '/검증'을 붙일 때만 작동합니다.
+    대신 느리고 무료 한도를 두 배로 씁니다 — 그래서 '/검증'을 붙일 때만 작동합니다.
     """
     models = [m for m in config["models"] if not _resting(m["label"])]
     if len(models) < 2:
@@ -1491,7 +1486,7 @@ def listen_once(config):
             language=cfg.get("language", "ko"),
         )
     except Exception as e:
-        print(f"  음성 인식 실패: {type(e).__name__} - {e}")
+        print(f"  음성 인식 실패: {type(e).__name__} — {e}")
         return ""
 
     if not text:
@@ -1500,12 +1495,12 @@ def listen_once(config):
 
 
 def finish(config, messages):
-    """End conversation and save facts."""
+    """종료할 때 이번 대화에서 기억할 만한 것을 골라 저장합니다."""
     print("\n대화를 정리하는 중...")
     try:
         saved = session.summarize_and_save(messages, config, call_model)
     except Exception as e:
-        print(f"  (정리 실패: {type(e).__name__} - 대화 기록은 memory/history 에 남아 있습니다)")
+        print(f"  (정리 실패: {type(e).__name__} — 대화 기록은 memory/history 에 남아 있습니다)")
         saved = []
 
     if saved:

@@ -427,7 +427,7 @@ def catch_up(config, call_model, notify=print, days=3):
                 for fact in saved:
                     f.write(f"- {fact}  ({day})\n")
             notify(f"  {day} 대화에서 {len(saved)}개를 기억했습니다")
-                auto_git_sync("push")
+            auto_git_sync("push")
         saved_all += saved
         _mark_covered(day, size)
     return saved_all
