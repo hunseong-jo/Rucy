@@ -1,15 +1,70 @@
 {
- "at": "2026-07-23T23:13:08",
+ "at": "2026-08-06T13:55:02",
  "brains": {
   "OpenRouter 무료 라우터": {
    "state": "alive",
-   "detail": "Sure thing! What would you like to talk about or work on tod",
-   "at": "2026-07-23"
+   "detail": "Sure! How can I assist you today?",
+   "at": "2026-08-06"
   },
   "Groq qwen3-32b": {
    "state": "dead",
    "detail": "HTTP 404 The model `qwen/qwen3-32b` does not exist or you do not have access to it.",
    "at": "2026-07-23"
+  },
+  "NVIDIA glm-5.2": {
+   "state": "slow",
+   "detail": "연결 실패 (TimeoutError)",
+   "at": "2026-08-06"
+  },
+  "Gemini 3 Flash": {
+   "state": "alive",
+   "detail": "How can I help you today?",
+   "at": "2026-08-06"
+  },
+  "Groq gpt-oss-120b": {
+   "state": "alive",
+   "detail": "Sure thing! How can I assist you today?",
+   "at": "2026-08-06"
+  },
+  "Groq qwen3.6-27b": {
+   "state": "alive",
+   "detail": "Alright! What can I help you with today? 😊",
+   "at": "2026-08-06"
+  },
+  "NVIDIA nemotron-nano-VL": {
+   "state": "alive",
+   "detail": "Hello! It looks like you might have accidentally pressed \"ok",
+   "at": "2026-08-06"
+  },
+  "NIM gemma-4-31b": {
+   "state": "alive",
+   "detail": "How can I help you today? Feel free to ask a question, give ",
+   "at": "2026-08-06"
+  },
+  "Gemini 3.1 Flash Lite": {
+   "state": "alive",
+   "detail": "How can I help you today?",
+   "at": "2026-08-06"
+  },
+  "NIM nemotron-3-nano-omni": {
+   "state": "alive",
+   "detail": "Sure! How can I help you today?",
+   "at": "2026-08-06"
+  },
+  "NVIDIA mistral-medium-3.5": {
+   "state": "alive",
+   "detail": "Hello! How can I assist you today? 😊",
+   "at": "2026-08-06"
+  },
+  "NVIDIA gpt-oss-120b": {
+   "state": "alive",
+   "detail": "Got it! 😊 If you have any questions, need assistance with so",
+   "at": "2026-08-06"
+  },
+  "NVIDIA nemotron-3-super": {
+   "state": "alive",
+   "detail": "Got it! How can I assist you today? 😊 Feel free to ask a que",
+   "at": "2026-08-06"
   }
  }
 }

@@ -263,8 +263,8 @@ function speakAnswer(answer) {                    // 이 기기(폰)의 스피�
 }
 
 async function poll(id) {         // 배경으로 넘어간 긴 턴 — 끝날 때까지 몇 초마다 찾아갑니다
-  for (let i = 0; i < 240; i++) {                   // 최대 20분
-    await new Promise(r => setTimeout(r, 5000));
+  for (let i = 0; i < 800; i++) {                   // 최대 20분
+    await new Promise(r => setTimeout(r, 1500));
     let d;
     try { d = await (await fetch('/poll?id=' + id)).json(); } catch (e) { continue; }
     if (d && d.pending) continue;
@@ -285,23 +285,64 @@ async function ask(question) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: question })
     });
-    let data = await res.json();
 
-    if (data.pending) {           // 시간이 걸리는 일 — 화면은 살려두고 결과만 기다립니다
-      b.innerHTML = '<span class="notes">⏳ 시간이 걸리는 일을 하는 중… (끝나면 여기 답이 달립니다. 다른 질문을 먼저 해도 됩니다)</span>';
-      send.disabled = false;
-      data = await poll(data.pending);
+    if (res.headers.get('Content-Type')?.includes('text/event-stream')) {
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let answerText = '';
+      let finalData = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = JSON.parse(line.substring(6));
+            if (data.error) {
+              b.classList.add('err');
+              b.textContent = data.error;
+              return;
+            } else if (data.note) {
+              b.innerHTML = '<span class="notes">' + escapeHtml(data.note) + '</span>';
+            } else if (data.chunk) {
+              if (answerText === '') {
+                b.innerHTML = '<div class="md"></div>';
+              }
+              answerText += data.chunk;
+              b.querySelector('.md').innerHTML = mdToHtml(answerText);
+              log.scrollTop = log.scrollHeight;
+            } else if (data.done) {
+              finalData = data;
+              finalData.answer = answerText;
+            }
+          }
+        }
+      }
+      if (finalData) {
+        render(b, finalData);
+        if (speakOn && finalData.answer) speakAnswer(finalData.answer);
+      }
+    } else {
+      let data = await res.json();
+      if (data.pending) {
+        b.innerHTML = '<span class="notes">⏳ 시간이 걸리는 일을 하는 중…</span>';
+        send.disabled = false;
+        data = await poll(data.pending);
+      }
+      if (data.error) {
+        b.innerHTML = '';
+        b.classList.add('err');
+        b.textContent = data.error;
+        return;
+      }
+      render(b, data);
+      if (speakOn && data.answer) speakAnswer(data.answer);
     }
-
-    if (data.error) {
-      b.innerHTML = '';
-      b.classList.add('err');
-      b.textContent = data.error;
-      return;
-    }
-
-    render(b, data);
-    if (speakOn && data.answer) speakAnswer(data.answer);
   } catch (e) {
     b.classList.add('err');
     b.textContent = '연결이 끊겼습니다. 컴퓨터에서 루시 웹이 켜져 있는지 확인해 주세요.';

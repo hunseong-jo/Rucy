@@ -373,13 +373,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def _answer(self, question):
         """한 턴을 돌리고 웹 응답 조각을 만듭니다 — /chat(글)과 /talk(말)이 같이 씁니다."""
         notes = []
+        import copy
         with _lock:                     # 한 번에 한 사람만 — 대화 기록이 엉키지 않게
-            # confirm=deny_confirm — 웹에서는 컴퓨터 조작(마우스·키보드)도 거부합니다.
-            # 이걸 빼면 respond의 기본값이 input()이라 서버가 통째로 멈추고,
-            # 더 나쁘게는 폰에서 원격으로 내 PC의 마우스를 휘두를 수 있게 됩니다
-            # (화면 앞에 사람이 없으면 잘못 눌러도 멈출 사람이 없습니다).
-            answer, used = agent.respond(_config, _state, question, notify=notes.append,
-                                         confirm=deny_confirm)
+            local_state = copy.deepcopy(_state)
+            len_before = len(local_state["messages"])
+            
+        # confirm=deny_confirm — 웹에서는 컴퓨터 조작(마우스·키보드)도 거부합니다.
+        answer, used = agent.respond(_config, local_state, question, notify=notes.append,
+                                     confirm=deny_confirm)
+                                     
+        with _lock:
+            _state["messages"].extend(local_state["messages"][len_before:])
+            _state["last_q"] = local_state.get("last_q", "")
+            _state["last_a"] = local_state.get("last_a", "")
+            _state["last_images"] = local_state.get("last_images", [])
         return {
             "answer": answer,
             "used": used,
@@ -458,8 +465,57 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 return self._json({"error": "잘못된 요청"}, 400)
             if not text:
                 return self._json({"error": "빈 질문"}, 400)
-            # 오류(이미지 못 읽음·전 두뇌 실패)도 _run_job이 답의 형태로 담아 옵니다.
-            return self._json(self._answer_or_pending(text))
+            
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Connection", "keep-alive")
+            self.end_headers()
+            
+            import queue
+            import copy
+            q = queue.Queue()
+            
+            def notify_stream(msg):
+                q.put({"note": msg})
+                
+            def run():
+                try:
+                    with _lock:
+                        local_state = copy.deepcopy(_state)
+                        len_before = len(local_state["messages"])
+                    ans, used = agent.respond(_config, local_state, text, notify=notify_stream, confirm=deny_confirm)
+                    with _lock:
+                        _state["messages"].extend(local_state["messages"][len_before:])
+                        _state["last_q"] = local_state.get("last_q", "")
+                        _state["last_a"] = local_state.get("last_a", "")
+                        _state["last_images"] = local_state.get("last_images", [])
+                        
+                    chunk_size = 4
+                    for i in range(0, len(ans), chunk_size):
+                        q.put({"chunk": ans[i:i+chunk_size]})
+                        time.sleep(0.015)
+                        
+                    q.put({
+                        "done": True,
+                        "used": used,
+                        "images": ["/file?p=" + urllib.parse.quote(p) for p in find_images(ans)],
+                        "files": [{"name": os.path.basename(p),
+                                   "url": "/file?p=" + urllib.parse.quote(p) + "&dl=1"}
+                                  for p in find_docs(ans)]
+                    })
+                except Exception as e:
+                    q.put({"error": str(e)})
+                    
+            threading.Thread(target=run, daemon=True).start()
+            
+            while True:
+                item = q.get()
+                self.wfile.write(b"data: " + json.dumps(item, ensure_ascii=False).encode('utf-8') + b"\n\n")
+                self.wfile.flush()
+                if "done" in item or "error" in item:
+                    break
+            return
 
         if url.path == "/talk":
             # 폰 마이크 → 받아쓰기 → 같은 respond() 한 벌 — '밖에서 루시랑 통화'의 서버 절반.
