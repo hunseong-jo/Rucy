@@ -1,42 +1,4 @@
 {
-  "2026-07-27": {
-    "Cerebras zai-glm-4.7": 5
-  },
-  "2026-07-28": {
-    "Cerebras zai-glm-4.7": 8,
-    "NVIDIA gpt-oss-120b": 53,
-    "NVIDIA nemotron-3-super": 6,
-    "Gemini 3 Flash": 3,
-    "NIM gemma-4-31b": 2,
-    "Gemini 3.1 Flash Lite": 2
-  },
-  "2026-07-29": {
-    "Cerebras zai-glm-4.7": 4
-  },
-  "2026-07-30": {
-    "Cerebras zai-glm-4.7": 3,
-    "점검 Gemini 3 Flash": 1,
-    "점검 OpenRouter 무료 라우터": 1,
-    "점검 Groq gpt-oss-120b": 1,
-    "점검 Groq qwen3.6-27b": 1,
-    "점검 NVIDIA nemotron-nano-VL": 1,
-    "점검 NIM gemma-4-31b": 1,
-    "점검 Gemini 3.1 Flash Lite": 1,
-    "점검 NIM nemotron-3-nano-omni": 1,
-    "점검 NVIDIA mistral-medium-3.5": 1
-  },
-  "2026-07-31": {
-    "NVIDIA gpt-oss-120b": 3
-  },
-  "2026-08-01": {
-    "Cerebras zai-glm-4.7": 3
-  },
-  "2026-08-02": {
-    "Cerebras zai-glm-4.7": 3
-  },
-  "2026-08-03": {
-    "Cerebras zai-glm-4.7": 5
-  },
   "2026-08-04": {
     "Cerebras zai-glm-4.7": 3
   },
@@ -67,6 +29,38 @@
     "Cerebras zai-glm-4.7": 2
   },
   "2026-08-10": {
-    "Cerebras zai-glm-4.7": 1
+    "Cerebras zai-glm-4.7": 5
+  },
+  "2026-08-11": {
+    "Cerebras zai-glm-4.7": 2
+  },
+  "2026-08-12": {
+    "Cerebras zai-glm-4.7": 2
+  },
+  "2026-08-13": {
+    "Cerebras zai-glm-4.7": 8,
+    "NVIDIA gpt-oss-120b": 8,
+    "NVIDIA nemotron-3-super": 3,
+    "NVIDIA glm-5.2": 4,
+    "Gemini 3 Flash": 7,
+    "OpenRouter 무료 라우터": 7,
+    "Groq gpt-oss-120b": 6,
+    "Groq qwen3.6-27b": 4,
+    "NVIDIA nemotron-nano-VL": 4,
+    "NIM gemma-4-31b": 7,
+    "Gemini 3.1 Flash Lite": 9,
+    "NIM nemotron-3-nano-omni": 6
+  },
+  "2026-08-14": {
+    "Cerebras zai-glm-4.7": 2
+  },
+  "2026-08-15": {
+    "Cerebras zai-glm-4.7": 2
+  },
+  "2026-08-16": {
+    "Cerebras zai-glm-4.7": 2
+  },
+  "2026-08-18": {
+    "NVIDIA gpt-oss-120b": 6
   }
 }

@@ -1,16 +1,16 @@
 {
-  "knowledge_sync": "2026-08-10",
-  "recover": "2026-08-10",
-  "umbrella": "2026-08-10",
+  "knowledge_sync": "2026-08-18",
+  "recover": "2026-08-18",
+  "umbrella": "2026-08-12",
   "briefing": "2026-07-25",
-  "consolidate": "2026-08-10",
-  "selfcheck": "2026-08-10",
-  "study": "2026-08-09",
-  "backup": "2026-08-04",
-  "bench": "2026-07-14",
-  "filesindex": "2026-08-10",
-  "cleanup": "2026-08-10",
-  "unity_health": "2026-08-09",
+  "consolidate": "2026-08-18",
+  "selfcheck": "2026-08-18",
+  "study": "2026-08-16",
+  "backup": "2026-08-11",
+  "bench": "2026-08-13",
+  "filesindex": "2026-08-18",
+  "cleanup": "2026-08-18",
+  "unity_health": "2026-08-16",
   "eye_trust": "2026-07-18",
-  "brain_probe": "2026-08-06"
+  "brain_probe": "2026-08-13"
 }
