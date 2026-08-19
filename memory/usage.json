@@ -1,7 +1,4 @@
 {
-  "2026-08-04": {
-    "Cerebras zai-glm-4.7": 3
-  },
   "2026-08-05": {
     "Cerebras zai-glm-4.7": 2
   },
@@ -61,6 +58,15 @@
     "Cerebras zai-glm-4.7": 2
   },
   "2026-08-18": {
-    "NVIDIA gpt-oss-120b": 6
+    "NVIDIA gpt-oss-120b": 11,
+    "Gemini 3 Flash": 5,
+    "Gemini 3.1 Flash Lite": 5,
+    "NIM nemotron-3-nano-omni": 5,
+    "NIM gemma-4-31b": 4,
+    "NVIDIA nemotron-nano-VL": 2
+  },
+  "2026-08-19": {
+    "NVIDIA gpt-oss-120b": 33,
+    "NVIDIA nemotron-3-super": 7
   }
 }
