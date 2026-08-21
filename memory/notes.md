@@ -36,3 +36,5 @@
 - 사용자는 실시간 지하철 도착 정보를 확인하기 위해 서울 열린데이터광장 인증키를 받아 `keys/seoul_subway.txt`에 저장하려고 함  (2026-07-14)
 - 사용자는 루시와 함께 첫 큰 프로젝트를 진행하려고 함  (2026-07-15)
 - 사용자는 루시의 TTS 목소리 볼륨을 낮게 설정하기를 원함  (2026-07-16)
+- User confirmed that the updated Pill Cooperation Game (Ally) PowerPoint (v1.2) and UI v0.6 core content has been successfully created and should be remembered in Lucy's memory.  (2026-08-19)
+- 사용자는 알약 협동 게임 기획서 업데이트 버전을 "C:\Users\user\Desktop\알약협동게임_기획서_수정_20240819.pptx" 파일명으로 생성했으며, 이를 기억해 달라고 요청하였다.  (2026-08-19)

@@ -1,21 +1,4 @@
 {
-  "2026-08-05": {
-    "Cerebras zai-glm-4.7": 2
-  },
-  "2026-08-06": {
-    "Cerebras zai-glm-4.7": 2,
-    "점검 NVIDIA gpt-oss-120b": 1,
-    "점검 NVIDIA nemotron-3-super": 1,
-    "점검 Gemini 3 Flash": 1,
-    "점검 OpenRouter 무료 라우터": 1,
-    "점검 Groq gpt-oss-120b": 1,
-    "점검 Groq qwen3.6-27b": 1,
-    "점검 NVIDIA nemotron-nano-VL": 1,
-    "점검 NIM gemma-4-31b": 1,
-    "점검 Gemini 3.1 Flash Lite": 1,
-    "점검 NIM nemotron-3-nano-omni": 1,
-    "점검 NVIDIA mistral-medium-3.5": 1
-  },
   "2026-08-07": {
     "Cerebras zai-glm-4.7": 2
   },
@@ -66,7 +49,10 @@
     "NVIDIA nemotron-nano-VL": 2
   },
   "2026-08-19": {
-    "NVIDIA gpt-oss-120b": 33,
+    "NVIDIA gpt-oss-120b": 36,
     "NVIDIA nemotron-3-super": 7
+  },
+  "2026-08-21": {
+    "NVIDIA gpt-oss-120b": 1
   }
 }
