@@ -35,12 +35,47 @@
     "archived_at": "2026-08-18",
     "facts_count": 0
   },
-  "2026-07-20": 8705,
-  "2026-07-21": 10814,
-  "2026-07-22": 13254,
-  "2026-07-23": 1173,
-  "2026-07-25": 20766,
-  "2026-07-26": 13379,
+  "2026-07-20": {
+    "size": 130,
+    "archived": true,
+    "archived_at": "2026-08-25",
+    "facts_count": 3
+  },
+  "2026-07-21": {
+    "size": 130,
+    "archived": true,
+    "archived_at": "2026-08-25",
+    "facts_count": 1
+  },
+  "2026-07-22": {
+    "size": 130,
+    "archived": true,
+    "archived_at": "2026-08-25",
+    "facts_count": 2
+  },
+  "2026-07-23": {
+    "size": 130,
+    "archived": true,
+    "archived_at": "2026-08-25",
+    "facts_count": 0
+  },
+  "2026-07-25": {
+    "size": 130,
+    "archived": true,
+    "archived_at": "2026-08-25",
+    "facts_count": 3
+  },
+  "2026-07-26": {
+    "size": 130,
+    "archived": true,
+    "archived_at": "2026-08-25",
+    "facts_count": 4
+  },
   "2026-07-28": 31747,
-  "2026-08-19": 9196
+  "2026-08-19": 9196,
+  "2026-07-11": {
+    "size": 134,
+    "archived": true,
+    "archived_at": "2026-08-25"
+  }
 }
