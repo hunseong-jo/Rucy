@@ -1,10 +1,10 @@
 {
- "at": "2026-08-21T17:07:18",
+ "at": "2026-08-28T21:52:12",
  "brains": {
   "OpenRouter 무료 라우터": {
    "state": "alive",
-   "detail": "Great! How can I assist you today?",
-   "at": "2026-08-21"
+   "detail": "Hello! How can I help you today?",
+   "at": "2026-08-28"
   },
   "Groq qwen3-32b": {
    "state": "dead",
@@ -12,49 +12,49 @@
    "at": "2026-07-23"
   },
   "NVIDIA glm-5.2": {
-   "state": "alive",
-   "detail": "Hello! How can I help you today? Let me know what you need.",
-   "at": "2026-08-21"
+   "state": "unknown",
+   "detail": "HTTP 410 {\"type\":\"about:blank\",\"title\":\"Gone\",\"status\":410,\"detail\":\"The model 'z-ai/glm-5.2' has reached its end of life on 2026-08-21T09:00:00Z and is no long",
+   "at": "2026-08-28"
   },
   "Gemini 3 Flash": {
    "state": "alive",
-   "detail": "How can I help you today? Feel free to ask a question or let",
-   "at": "2026-08-21"
+   "detail": "How can I help you today?",
+   "at": "2026-08-28"
   },
   "Groq gpt-oss-120b": {
    "state": "alive",
    "detail": "Sure thing! How can I help you today?",
-   "at": "2026-08-21"
+   "at": "2026-08-28"
   },
   "Groq qwen3.6-27b": {
    "state": "alive",
-   "detail": "Got it! What can I help you with today? Whether it's a quest",
-   "at": "2026-08-21"
+   "detail": "Alright! What would you like to work on or ask about? I'm he",
+   "at": "2026-08-28"
   },
   "NVIDIA nemotron-nano-VL": {
-   "state": "slow",
-   "detail": "연결 실패 (TimeoutError)",
-   "at": "2026-08-21"
+   "state": "unknown",
+   "detail": "HTTP 410 {\"type\":\"about:blank\",\"title\":\"Gone\",\"status\":410,\"detail\":\"The model 'nvidia/nemotron-nano-12b-v2-vl' has reached its end of life on 2026-08-26T09:00:",
+   "at": "2026-08-28"
   },
   "NIM gemma-4-31b": {
    "state": "alive",
-   "detail": "How can I help you today? Feel free to ask a question, give ",
-   "at": "2026-08-21"
+   "detail": "How can I help you today?",
+   "at": "2026-08-28"
   },
   "Gemini 3.1 Flash Lite": {
    "state": "alive",
    "detail": "How can I help you today?",
-   "at": "2026-08-21"
+   "at": "2026-08-28"
   },
   "NIM nemotron-3-nano-omni": {
    "state": "alive",
-   "detail": "Sure! How can I help you today?",
-   "at": "2026-08-21"
+   "detail": "Sure! How can I assist you today?",
+   "at": "2026-08-28"
   },
   "NVIDIA mistral-medium-3.5": {
    "state": "unknown",
    "detail": "HTTP 410 {\"type\":\"about:blank\",\"title\":\"Gone\",\"status\":410,\"detail\":\"The model 'mistralai/mistral-medium-3.5-128b' has reached its end of life on 2026-08-07T09:",
-   "at": "2026-08-21"
+   "at": "2026-08-28"
   },
   "NVIDIA gpt-oss-120b": {
    "state": "alive",
@@ -63,8 +63,8 @@
   },
   "NVIDIA nemotron-3-super": {
    "state": "alive",
-   "detail": "Got it! How can I assist you today? 😊 Feel free to ask a que",
-   "at": "2026-08-06"
+   "detail": "It seems like your message might be incomplete or you're tes",
+   "at": "2026-08-28"
   }
  }
 }

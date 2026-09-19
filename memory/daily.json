@@ -1,16 +1,16 @@
 {
-  "knowledge_sync": "2026-08-25",
-  "recover": "2026-08-25",
-  "umbrella": "2026-08-24",
+  "knowledge_sync": "2026-08-29",
+  "recover": "2026-08-29",
+  "umbrella": "2026-08-29",
   "briefing": "2026-07-25",
   "consolidate": "2026-08-25",
-  "selfcheck": "2026-08-25",
-  "study": "2026-08-24",
-  "backup": "2026-08-18",
+  "selfcheck": "2026-08-29",
+  "study": "2026-08-29",
+  "backup": "2026-08-25",
   "bench": "2026-08-13",
-  "filesindex": "2026-08-25",
-  "cleanup": "2026-08-25",
-  "unity_health": "2026-08-24",
+  "filesindex": "2026-08-29",
+  "cleanup": "2026-08-29",
+  "unity_health": "2026-08-29",
   "eye_trust": "2026-08-18",
-  "brain_probe": "2026-08-21"
+  "brain_probe": "2026-08-28"
 }
