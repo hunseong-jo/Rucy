@@ -7,7 +7,7 @@
       "s_n": 0,
       "s_max": 0.0,
       "fail": {
-        "http": 1
+        "http": 18
       }
     },
     "NVIDIA gpt-oss-120b": {
@@ -17,15 +17,65 @@
       "s_n": 0,
       "s_max": 0.0,
       "fail": {
-        "http": 1
+        "http": 18
       }
     },
     "NVIDIA nemotron-3-super": {
+      "ok": 6,
+      "fb": 5,
+      "s_sum": 44.88941764831543,
+      "s_n": 6,
+      "s_max": 16.295456409454346,
+      "fail": {
+        "busy": 1,
+        "timeout": 1
+      }
+    },
+    "NVIDIA mistral-medium-3.5": {
+      "ok": 0,
+      "fb": 0,
+      "s_sum": 0.0,
+      "s_n": 0,
+      "s_max": 0.0,
+      "fail": {
+        "http": 12
+      }
+    },
+    "NVIDIA glm-5.2": {
+      "ok": 0,
+      "fb": 0,
+      "s_sum": 0.0,
+      "s_n": 0,
+      "s_max": 0.0,
+      "fail": {
+        "http": 13
+      }
+    },
+    "Gemini 3 Flash": {
+      "ok": 8,
+      "fb": 8,
+      "s_sum": 50.661686182022095,
+      "s_n": 8,
+      "s_max": 13.41340970993042,
+      "fail": {
+        "http": 2,
+        "timeout": 1
+      }
+    },
+    "OpenRouter 무료 라우터": {
+      "ok": 4,
+      "fb": 4,
+      "s_sum": 152.37085914611816,
+      "s_n": 4,
+      "s_max": 65.00529384613037,
+      "fail": {}
+    },
+    "Groq gpt-oss-120b": {
       "ok": 1,
       "fb": 1,
-      "s_sum": 2.0567102432250977,
+      "s_sum": 2.932549238204956,
       "s_n": 1,
-      "s_max": 2.0567102432250977,
+      "s_max": 2.932549238204956,
       "fail": {}
     }
   }
